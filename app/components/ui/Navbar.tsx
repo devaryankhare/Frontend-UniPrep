@@ -1,7 +1,11 @@
+"use client";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Navbar() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navlinks = [
     {
       title: "Home",
@@ -34,8 +38,24 @@ export default function Navbar() {
             </li>
           ))}
         </ul>
+
+        {/* auth */}
         <div>
-            
+          {isLoggedIn ? (
+            <button
+              onClick={() => setIsLoggedIn(false)} // logout
+              className="flex items-center gap-2"
+            >
+            </button>
+          ) : (
+            <Link
+              href="/login"
+              className="px-6 py-2 rounded-lg text-lg bg-linear-to-br from-blue-500 to-blue-700 text-white"
+              onClick={() => setIsLoggedIn(true)} // login
+            >
+              Login
+            </Link>
+          )}
         </div>
       </div>
     </main>
