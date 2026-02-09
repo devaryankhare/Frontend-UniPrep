@@ -26,9 +26,9 @@ export default function Navbar() {
   ];
 
   return (
-    <main className="flex items-center justify-center">
-      <div className="max-w-6xl flex items-center justify-center border border-red-500">
-        <Image height={64} width={64} alt="logo" src="/logo.png" />
+    <main className="flex items-center w-full font-roboto">
+      <div className="max-w-6xl w-full mx-auto flex items-center justify-between border border-red-500 rounded-full p-4">
+        <Image height={122} width={122} alt="logo" src="/logo.png" />
         <ul className="text-black flex gap-6">
           {navlinks.map((item, index) => (
             <li key={index} className="">
@@ -50,7 +50,7 @@ export default function Navbar() {
           ) : (
             <Link
               href="/login"
-              className="px-6 py-2 rounded-lg text-lg bg-linear-to-br from-blue-500 to-blue-700 text-white"
+              className="px-6 py-2 font-roboto rounded-lg text-lg bg-linear-to-br from-blue-500 to-blue-700 text-white"
               onClick={() => setIsLoggedIn(true)} // login
             >
               Login
