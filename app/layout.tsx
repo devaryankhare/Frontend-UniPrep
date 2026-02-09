@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import SmoothScrollProvider from "./components/ui/SmoothScrollProvider";
 
 export const metadata: Metadata = {
   title: "Uniprep",
@@ -14,9 +15,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className="bg-neutral-100"
+        className=""
       >
-        {children}
+        <SmoothScrollProvider>
+          {children}
+        </SmoothScrollProvider>
       </body>
     </html>
   );

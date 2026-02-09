@@ -3,13 +3,13 @@ import {
   TiStarHalfOutline,
   TiStarOutline,
 } from "react-icons/ti";
-import { FiArrowUpRight } from "react-icons/fi";
 import Link from "next/link";
+import Grid from "./ui/grid";
 
 export default function Hero() {
   return (
-    <main className="max-w-6xl mx-auto w-full">
-      <div className="flex flex-col gap-8 justify-center items-center h-screen">
+    <main className="max-w-6xl mx-auto w-full pt-24">
+      <div className="flex flex-col gap-8 justify-center items-center">
         <div className="bg-white flex gap-2 items-center justify-center rounded-full py-2 px-4">
           <span className="flex flex-row items-center justify-center">
             <TiStarFullOutline className="text-blue-500" />
@@ -29,16 +29,23 @@ export default function Hero() {
           education and collaboration to shape a brighter future.
         </p>
 
-        <div className="flex gap-2">
+        <div className="flex gap-6">
           <Link href="/login" className="font-roboto flex text-white">
-            <span className="rounded-full flex bg-black items-center justify-center text-xl  shadow-xl px-8 py-2">
+            <span className="rounded-full flex bg-linear-to-br duration-300 hover:scale-105 from-blue-400 to-blue-600 items-center justify-center text-lg shadow-xl px-8 py-4">
               Get Started Now
             </span>
           </Link>
 
-          <Link className="rounded-full flex bg-white text-black items-center justify-center text-xl  shadow-xl px-8 py-2" href="">
+          <Link
+            className="rounded-full flex bg-white duration-300 hover:scale-105 text-black items-center justify-center text-lg shadow-xl px-8 py-4"
+            href=""
+          >
             View Courses
           </Link>
+        </div>
+
+        <div className="py-12">
+            <Grid />
         </div>
       </div>
     </main>
