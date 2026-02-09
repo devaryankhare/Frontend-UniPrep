@@ -27,13 +27,13 @@ export default function Navbar() {
   ];
 
   return (
-    <main className="flex items-center w-full pt-4 font-roboto">
-      <div className="max-w-6xl w-full mx-auto flex items-center justify-between shadow-xl rounded-full px-6">
+    <main className="fixed top-0 inset-x-0 z-50 flex items-center w-full pt-4 font-roboto">
+      <div className="max-w-6xl w-full mx-auto flex items-center justify-between rounded-full px-6 bg-white/90 backdrop-blur-md">
         <Image className="" height={124} width={72} alt="logo" src="/logo.png" />
         <ul className="text-black flex gap-6">
           {navlinks.map((item, index) => (
             <li key={index} className="">
-              <Link href={item.link} className="text-md">
+              <Link href={item.link} className="hover:underline duration-300">
                 {item.title}
               </Link>
             </li>
@@ -54,8 +54,8 @@ export default function Navbar() {
               className="font-roboto flex text-white"
               onClick={() => setIsLoggedIn(true)} // login
             >
-              <span className="rounded-full flex items-center justify-center text-lg bg-linear-to-br from-blue-500 to-blue-700 shadow-xl px-8 py-2">Login</span>
-              <span className="bg-black rounded-full p-3 flex items-center justify-center shadow-xl"><FiArrowUpRight className="text-xl"/></span>
+              <span className="rounded-full flex items-center justify-center text-xl bg-linear-to-br from-blue-500 to-blue-700 shadow-xl px-8 py-2">Login</span>
+              <span className="bg-black rounded-full p-3 flex items-center justify-center shadow-xl"><FiArrowUpRight className="text-2xl"/></span>
             </Link>
           )}
         </div>
