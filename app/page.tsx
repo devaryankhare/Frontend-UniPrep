@@ -8,7 +8,7 @@ export default function Home(){
         <Navbar />
       </div>
 
-      <div className="bg-linear-to-br from-blue-100 to-white">
+      <div className="">
         <Hero />
       </div>
     </main>

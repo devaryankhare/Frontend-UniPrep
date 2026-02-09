@@ -55,7 +55,6 @@ export default function Navbar() {
               onClick={() => setIsLoggedIn(true)} // login
             >
               <span className="rounded-full flex items-center justify-center text-xl bg-linear-to-br from-blue-500 to-blue-700 shadow-xl px-8 py-2">Login</span>
-              <span className="bg-black rounded-full p-3 flex items-center justify-center shadow-xl"><FiArrowUpRight className="text-2xl"/></span>
             </Link>
           )}
         </div>
