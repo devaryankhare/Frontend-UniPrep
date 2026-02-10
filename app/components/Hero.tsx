@@ -21,18 +21,18 @@ export default function Hero() {
           <span className="text-black font-semibold">4.5</span>
           <span className="text-black">(120k Review)</span>
         </div>
-        <h1 className="text-6xl max-w-2xl text-black text-center">
-          Creating a better future by enabling minds
+        <h1 className="text-6xl max-w-3xl text-black text-center">
+          Practice like the real exam. Prepare with rankers.
         </h1>
-        <p className="max-w-2xl text-lg text-center text-neutral-800">
-          Let{"'"}s nurture potential, empower minds, and foster growth through
-          education and collaboration to shape a brighter future.
+        <p className="max-w-2xl text-xl text-center text-neutral-800">
+          Mock tests, PYQs, notes, flashcards, and performance analytics all in
+          one place.
         </p>
 
         <div className="flex gap-6">
           <Link href="/login" className="font-roboto flex text-white">
             <span className="rounded-full flex bg-linear-to-br duration-300 hover:scale-105 from-blue-400 to-blue-600 items-center justify-center text-lg shadow-xl px-8 py-4">
-              Get Started Now
+              Start Preparation
             </span>
           </Link>
 
@@ -40,12 +40,12 @@ export default function Hero() {
             className="rounded-full flex bg-white duration-300 hover:scale-105 text-black items-center justify-center text-lg shadow-xl px-8 py-4"
             href=""
           >
-            View Courses
+            Explore Mocks
           </Link>
         </div>
 
         <div className="py-12">
-            <Grid />
+          <Grid />
         </div>
       </div>
     </main>
