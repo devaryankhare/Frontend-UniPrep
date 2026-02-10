@@ -58,8 +58,8 @@ export default function Navbar() {
               className="font-roboto flex text-white"
               onClick={() => setIsLoggedIn(true)} // login
             >
-              <span className="rounded-full flex items-center justify-center text-lg bg-linear-to-br from-neutral-500 to-black shadow-xl px-8 py-2">
-                Login
+              <span className="rounded-full flex items-center justify-center bg-linear-to-br from-blue-400 via-blue-500 to-blue-600 hover:scale-105 duration-300 shadow-xl px-8 py-2">
+                Join Now
               </span>
             </Link>
           )}
