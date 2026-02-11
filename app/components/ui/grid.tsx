@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import Image from "next/image";
+import { FaFaceSmileBeam, FaGraduationCap } from "react-icons/fa6";
 
 const capsules = [
   "Happy Students",
@@ -37,24 +38,27 @@ export default function Grid() {
     <main className="flex flex-col gap-6 w-full">
       <div className="grid grid-cols-6 gap-6 w-full">
         <div className="flex flex-col gap-6 w-full col-span-2">
-          <div className="flex gap-6 flex-wrap">
-            <img
-              src="https://i.pravatar.cc/100?img=12"
-              className="rounded-2xl shadow-lg"
-              height={166}
-              width={166}
-              alt="person"
-            />
-            <img
-              src="https://i.pravatar.cc/100?img=13"
-              className="rounded-2xl shadow-lg"
-              height={166}
-              width={166}
-              alt="person"
-            />
+          <div className="flex gap-6 items-stretch">
+            <div className="flex flex-col items-center justify-center bg-linear-to-br from-blue-200 to-blue-300 shadow-lg rounded-2xl p-6 min-w-[160px]">
+              <span className="text-5xl">
+                <FaFaceSmileBeam className="text-black"/>
+              </span>
+              <p className="mt-2 text-center text-lg text-black">
+                100+ Happy Students
+              </p>
+            </div>
+
+            <div className="flex flex-col items-center justify-center bg-linear-to-br from-purple-200 to-purple-300 shadow-lg rounded-2xl p-6 min-w-[160px]">
+              <span className="text-5xl">
+                <FaGraduationCap className="text-black" />
+              </span>
+              <p className="mt-2 text-lg text-center text-black">
+                50+ Expert Mentors
+              </p>
+            </div>
           </div>
           <div>
-            <div className="bg-linear-to-br shadow-lg from-orange-200 to-orange-300 min-h-[260px] lg:h-[34vh] rounded-2xl flex flex-col justify-between p-6">
+            <div className="bg-linear-to-br shadow-lg from-orange-200 to-orange-300 min-h-[264px] lg:h-[40vh] rounded-2xl flex flex-col justify-between p-6">
               {/* Avatar Stack */}
               <div className="flex -space-x-3">
                 {[
@@ -86,38 +90,39 @@ export default function Grid() {
 
         {/* Ken Burns Slideshow */}
         <div className="relative h-[65vh] shadow-lg w-full overflow-hidden rounded-2xl col-span-2">
-          {["/colleges/college1.webp", "/colleges/college2.jpeg", "/colleges/college3.jpeg"].map(
-            (src, i) => (
-              <motion.div
-                key={src}
-                className="absolute inset-0"
-                initial={{ opacity: 0, scale: 1 }}
-                animate={{
-                  opacity: [0, 1, 1, 0],
-                  scale: [1, 1.12, 1.18, 1.2],
-                }}
-                transition={{
-                  duration: 18,
-                  repeat: Infinity,
-                  delay: i * 6,
-                  ease: "linear",
-                }}
-              >
-                <Image
-                  src={src}
-                  alt="college image"
-                  fill
-                  className="object-cover object-center"
-                  priority={i === 0}
-                />
-              </motion.div>
-            )
-          )}
+          {[
+            "/colleges/college1.webp",
+            "/colleges/college2.jpeg",
+            "/colleges/college3.jpeg",
+          ].map((src, i) => (
+            <motion.div
+              key={src}
+              className="absolute inset-0"
+              initial={{ opacity: 0, scale: 1 }}
+              animate={{
+                opacity: [0, 1, 1, 0],
+                scale: [1, 1.12, 1.18, 1.2],
+              }}
+              transition={{
+                duration: 18,
+                repeat: Infinity,
+                delay: i * 6,
+                ease: "linear",
+              }}
+            >
+              <Image
+                src={src}
+                alt="college image"
+                fill
+                className="object-cover object-center"
+                priority={i === 0}
+              />
+            </motion.div>
+          ))}
         </div>
 
         <div className="col-span-2 flex flex-col gap-6">
           <div className="h-[36vh] flex flex-col justify-center items-center bg-linear-to-br shadow-lg from-green-200 to-green-300 rounded-2xl relative overflow-hidden">
-
             {/* Circular Accuracy Graph */}
             <div className="relative w-40 h-40">
               <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
@@ -152,7 +157,7 @@ export default function Grid() {
             </div>
 
             {/* Subtitle */}
-            <p className="mt-4 text-xl text-black">Over subjects covered</p>
+            <p className="mt-4 text-xl text-black">Over Subjects Covered</p>
           </div>
           <div className="h-[26vh] shadow-lg bg-linear-to-br from-yellow-200 to-yellow-300 rounded-2xl p-6 flex flex-col gap-4">
             <h1 className="text-xl text-black">Learn & Prepare</h1>
