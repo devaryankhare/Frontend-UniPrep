@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <main className="relative mx-auto w-full py-24 backdrop-blur-lg overflow-hidden">
+    <main className="relative mx-auto w-full py-16 backdrop-blur-lg overflow-hidden">
       {/* Floating background logos */}
       <div className="absolute inset-0 pointer-events-none -z-10">
         <img
