@@ -29,7 +29,7 @@ export default function Navbar() {
     <main className="flex items-center w-full pt-4 font-roboto bg-white">
       <div className="max-w-6xl w-full mx-auto flex items-center justify-between p-2">
         <Image
-          src="/logo.png"
+          src="/logo.svg"
           alt="logo"
           width={240}
           height={240}

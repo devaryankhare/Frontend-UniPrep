@@ -4,15 +4,11 @@ import {
   TiStarOutline,
 } from "react-icons/ti";
 import Link from "next/link";
-import Grid from "./ui/grid";
-import ImageCarousel from "./ui/infiniteCarousal";
 
 export default function Hero() {
-  const logos = ["/logos/du.png", "/logos/srcc.png", "/logos/jnu.png", "/logos/st.png"];
-
   return (
-    <main className="max-w-6xl mx-auto w-full pt-24">
-      <div className="flex flex-col gap-8 justify-center items-center">
+    <main className="mx-auto w-full py-24 backdrop-blur-lg">
+      <div className="flex flex-col gap-8 justify-start items-center">
         <div className="bg-white flex gap-2 items-center justify-center rounded-full py-2 px-4">
           <span className="flex flex-row items-center justify-center">
             <TiStarFullOutline className="text-blue-500" />
@@ -45,17 +41,6 @@ export default function Hero() {
           >
             Explore Mocks
           </Link>
-        </div>
-
-        <div className="py-12">
-          <Grid />
-        </div>
-
-        <div className="max-w-6xl">
-          <div className="flex flex-col items-center justify-center">
-            <h2 className="py-8 text-xl text-black">Colleges to Crack</h2>
-            <ImageCarousel images={logos} speed={120} />
-          </div>
         </div>
       </div>
     </main>
