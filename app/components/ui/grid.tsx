@@ -84,20 +84,75 @@ export default function Grid() {
           </div>
         </div>
 
+        {/* Ken Burns Slideshow */}
         <div className="relative h-[65vh] shadow-lg w-full overflow-hidden rounded-2xl col-span-2">
-          <Image
-            src="/colleges/college3.webp"
-            alt="college image"
-            fill
-            className="object-cover object-center"
-            priority
-          />
+          {["/colleges/college1.webp", "/colleges/college2.jpeg", "/colleges/college3.jpeg"].map(
+            (src, i) => (
+              <motion.div
+                key={src}
+                className="absolute inset-0"
+                initial={{ opacity: 0, scale: 1 }}
+                animate={{
+                  opacity: [0, 1, 1, 0],
+                  scale: [1, 1.12, 1.18, 1.2],
+                }}
+                transition={{
+                  duration: 18,
+                  repeat: Infinity,
+                  delay: i * 6,
+                  ease: "linear",
+                }}
+              >
+                <Image
+                  src={src}
+                  alt="college image"
+                  fill
+                  className="object-cover object-center"
+                  priority={i === 0}
+                />
+              </motion.div>
+            )
+          )}
         </div>
 
         <div className="col-span-2 flex flex-col gap-6">
-          <div className="h-[36vh] flex flex-col justify-center items-center bg-linear-to-br shadow-lg from-green-200 to-green-300 rounded-2xl">
-            <h1 className="text-6xl text-black font-bold">10+</h1>
-            <p className="text-xl text-black">Over subjects covered</p>
+          <div className="h-[36vh] flex flex-col justify-center items-center bg-linear-to-br shadow-lg from-green-200 to-green-300 rounded-2xl relative overflow-hidden">
+
+            {/* Circular Accuracy Graph */}
+            <div className="relative w-40 h-40">
+              <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
+                {/* Background Circle */}
+                <path
+                  d="M18 2.0845
+                     a 15.9155 15.9155 0 0 1 0 31.831
+                     a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#bfdbfe"
+                  strokeWidth="3"
+                />
+
+                {/* Progress Circle */}
+                <path
+                  d="M18 2.0845
+                     a 15.9155 15.9155 0 0 1 0 31.831
+                     a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#3b82f6"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeDasharray="100, 100"
+                />
+              </svg>
+
+              {/* Center Text */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <h1 className="text-4xl font-bold text-black">100%</h1>
+                <p className="text-sm text-black">Accuracy</p>
+              </div>
+            </div>
+
+            {/* Subtitle */}
+            <p className="mt-4 text-xl text-black">Over subjects covered</p>
           </div>
           <div className="h-[26vh] shadow-lg bg-linear-to-br from-yellow-200 to-yellow-300 rounded-2xl p-6 flex flex-col gap-4">
             <h1 className="text-xl text-black">Learn & Prepare</h1>
