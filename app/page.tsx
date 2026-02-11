@@ -2,12 +2,13 @@ import Navbar from "./components/ui/Navbar";
 import Hero from "./components/Hero";
 import Grid from "./components/ui/grid";
 import ImageCarousel from "./components/ui/infiniteCarousal";
+import Feature from "./components/Feature";
 
 export default function Home(){
   const logos = ["/logos/du.png", "/logos/srcc.png", "/logos/jnu.png", "/logos/st.png"];
 
   return(
-    <main className="bg-linear-to-br from-white to-blue-100">
+    <main className="bg-linear-to-br from-orange-100 via-white to-orange-100">
       <div>
         <Navbar />
       </div>
@@ -25,6 +26,10 @@ export default function Home(){
             <h2 className="py-8 text-xl text-black">Colleges to Crack</h2>
             <ImageCarousel images={logos} speed={120} />
           </div>
+       </div>
+
+       <div className="py-12">
+        <Feature />
        </div>
     </main>
   );
