@@ -4,7 +4,7 @@ import { MdOutlineMenuBook } from "react-icons/md";
 
 export default function Feature(){
     return(
-        <main className="max-w-6xl mx-auto py-12">
+        <main className="max-w-6xl mx-auto py-6">
             <div className="flex flex-col items-center justify-center gap-6">
                 <h1 className="text-6xl max-w-xl text-center text-black">Choose us because of our experience</h1>
                 <p className="text-lg max-w-xl text-center text-neutral-800">Let{'\''}s nurture potential, empower minds, and foster growth through education and collaboration to shape a brighter future.</p>

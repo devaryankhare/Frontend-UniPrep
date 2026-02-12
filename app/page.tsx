@@ -29,7 +29,7 @@ export default function Home(){
           </div>
        </div>
 
-       <div className="py-12">
+       <div className="py-8">
         <Feature />
        </div>
 
