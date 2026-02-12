@@ -3,6 +3,7 @@ import Hero from "./components/Hero";
 import Grid from "./components/ui/grid";
 import ImageCarousel from "./components/ui/infiniteCarousal";
 import Feature from "./components/Feature";
+import Courses from "./components/Courses";
 
 export default function Home(){
   const logos = ["/logos/du.png", "/logos/srcc.png", "/logos/jnu.png", "/logos/st.png"];
@@ -30,6 +31,10 @@ export default function Home(){
 
        <div className="py-12">
         <Feature />
+       </div>
+
+       <div>
+        <Courses />
        </div>
     </main>
   );
