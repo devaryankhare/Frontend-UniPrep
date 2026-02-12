@@ -1,28 +1,36 @@
 "use client";
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useAuth } from "@/hooks/useAuth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    await fetch("/api/logout", { method: "POST" });
+  };
+
   const navlinks = [
-    {
-      title: "Home",
-      link: "#",
-    },
-    {
-      title: "PYQs",
-      link: "#",
-    },
-    {
-      title: "Materials",
-      link: "#",
-    },
-    {
-      title: "FAQs",
-      link: "#",
-    },
+    { title: "Home", link: "/" },
+    { title: "PYQs", link: "#" },
+    { title: "Materials", link: "#" },
+    { title: "FAQs", link: "#" },
   ];
 
   return (
@@ -35,9 +43,10 @@ export default function Navbar() {
           height={240}
           className="h-14 w-auto object-contain px-8"
         />
+
         <ul className="text-black flex gap-6">
           {navlinks.map((item, index) => (
-            <li key={index} className="">
+            <li key={index}>
               <Link href={item.link} className="hover:underline duration-300">
                 {item.title}
               </Link>
@@ -45,22 +54,20 @@ export default function Navbar() {
           ))}
         </ul>
 
-        {/* auth */}
         <div>
           {isLoggedIn ? (
             <button
-              onClick={() => setIsLoggedIn(false)} // logout
-              className="flex items-center gap-2"
-            ></button>
+              onClick={handleLogout}
+              className="rounded-full bg-red-500 text-white px-6 py-2 hover:scale-105 duration-300 shadow-xl"
+            >
+              Logout
+            </button>
           ) : (
             <Link
-              href="/login"
-              className="font-roboto flex text-white"
-              onClick={() => setIsLoggedIn(true)} // login
+              href="/signup"
+              className="rounded-full bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 text-white px-8 py-2 hover:scale-105 duration-300 shadow-xl"
             >
-              <span className="rounded-full flex items-center justify-center bg-linear-to-br from-blue-400 via-blue-500 to-blue-600 hover:scale-105 duration-300 shadow-xl px-8 py-2">
-                Join Now
-              </span>
+              Join Now
             </Link>
           )}
         </div>
