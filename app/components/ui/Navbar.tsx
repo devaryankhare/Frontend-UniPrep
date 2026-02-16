@@ -1,24 +1,22 @@
+
+
+
 "use client";
+
 import { FaPowerOff } from "react-icons/fa6";
 import { MdDashboard } from "react-icons/md";
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { onAuthStateChanged, signOut, User } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
-  const [user, setUser] = useState<User | null>(null);
+  const { user, logout } = useAuthStore();
+  const router = useRouter();
+
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-    });
-
-    return () => unsubscribe();
-  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -34,10 +32,10 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = async () => {
-    await signOut(auth);
-    await fetch("/api/logout", { method: "POST" });
+  const handleLogout = () => {
+    logout();
     setOpen(false);
+    router.push("/login");
   };
 
   const navlinks = [
@@ -47,9 +45,7 @@ export default function Navbar() {
     { title: "FAQs", link: "#" },
   ];
 
-  const userInitial = user?.displayName
-    ? user.displayName.charAt(0).toUpperCase()
-    : user?.email?.charAt(0).toUpperCase();
+  const userInitial = user?.name?.charAt(0).toUpperCase();
 
   return (
     <main className="flex items-center w-full pt-4 font-roboto bg-white">
@@ -89,24 +85,26 @@ export default function Navbar() {
                     className="px-4 py-2 flex gap-2 border-b border-neutral-200 justify-center items-center text-black hover:bg-gray-100 rounded-t-xl"
                     onClick={() => setOpen(false)}
                   >
-                    <MdDashboard /><span>Dashboard</span>
+                    <MdDashboard />
+                    <span>Dashboard</span>
                   </Link>
 
                   <button
                     onClick={handleLogout}
                     className="w-full text-left flex justify-center items-center gap-2 px-4 py-2 hover:bg-gray-100 rounded-b-xl text-red-500"
                   >
-                    <FaPowerOff /><span>Logout</span>
+                    <FaPowerOff />
+                    <span>Logout</span>
                   </button>
                 </div>
               )}
             </>
           ) : (
             <Link
-              href="/signup"
+              href="/login"
               className="rounded-full bg-linear-to-br from-blue-400 via-blue-500 to-blue-600 text-white px-8 py-2 hover:scale-105 duration-300 shadow-xl"
             >
-              Join Now
+              Login
             </Link>
           )}
         </div>

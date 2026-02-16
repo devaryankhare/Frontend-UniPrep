@@ -1,12 +1,27 @@
+
+"use client";
 import Navbar from "./components/ui/Navbar";
 import Hero from "./components/Hero";
 import Grid from "./components/ui/grid";
 import ImageCarousel from "./components/ui/infiniteCarousal";
 import Feature from "./components/Feature";
 import Courses from "./components/Courses";
+import { useEffect } from "react";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useRouter } from "next/navigation";
 
 export default function Home(){
-  const logos = ["/logos/du.png", "/logos/srcc.png", "/logos/jnu.png", "/logos/st.png"];
+    const logos = ["/logos/du.png", "/logos/srcc.png", "/logos/jnu.png", "/logos/st.png"];
+
+const router=useRouter()
+  const auth=useAuthStore()
+ useEffect(() => {
+    if (auth.hasHydrated && !auth.token) {
+      router.push("/login");
+    }
+  }, [auth.token, auth.hasHydrated, router]);
+
+  if (!auth.hasHydrated) return null;
 
   return(
     <main className="bg-linear-to-br from-orange-100 via-white to-orange-100">

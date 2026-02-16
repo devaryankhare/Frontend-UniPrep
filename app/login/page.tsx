@@ -1,8 +1,9 @@
 "use client";
+
 import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
+import { loginUser } from "@/services/authServices";
+import { useAuthStore } from "@/store/useAuthStore";
 import Link from "next/link";
 
 export default function LoginPage() {
@@ -10,25 +11,24 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const router = useRouter();
 
+  const setAuth = useAuthStore((state) => state.setAuth);
+
   const handleLogin = async () => {
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
+      const data = await loginUser(email, password);
+
+      setAuth(
+        {
+          _id: data._id,
+          name: data.name,
+          email: data.email,
+        },
+        data.access_token
       );
 
-      const token = await userCredential.user.getIdToken();
-
-      await fetch("/api/session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
-      });
-
       router.push("/");
-    } catch (err) {
-      alert("Login failed");
+    } catch (err: any) {
+      alert(err.response?.data?.message || "Login failed");
     }
   };
 
@@ -40,7 +40,7 @@ export default function LoginPage() {
         <input
           type="email"
           placeholder="Email"
-          className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="border p-3 rounded-lg"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -48,19 +48,20 @@ export default function LoginPage() {
         <input
           type="password"
           placeholder="Password"
-          className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="border p-3 rounded-lg"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
 
         <button
           onClick={handleLogin}
-          className="bg-blue-600 text-white py-3 rounded-lg hover:opacity-90 transition"
+          className="bg-blue-600 text-white py-3 rounded-lg"
         >
           Login
         </button>
+
         <p className="text-sm text-center">
-          Don’t have an account? {" "}
+          Don’t have an account?{" "}
           <Link href="/signup" className="text-blue-600 underline">
             Sign up
           </Link>
