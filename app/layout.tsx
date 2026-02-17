@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import SmoothScrollProvider from "./components/ui/SmoothScrollProvider";
+import AuthLoader from "./AuthLoader";
 
 export const metadata: Metadata = {
   title: "Uniprep",
@@ -17,6 +18,7 @@ export default function RootLayout({
       <body
         className=""
       >
+        <AuthLoader/>
         <SmoothScrollProvider>
           {children}
         </SmoothScrollProvider>

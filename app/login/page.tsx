@@ -11,20 +11,14 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const router = useRouter();
 
-  const setAuth = useAuthStore((state) => state.setAuth);
+  const checkAuth = useAuthStore((state) => state.checkAuth);
 
   const handleLogin = async () => {
     try {
-      const data = await loginUser(email, password);
+      await loginUser(email, password);
 
-      setAuth(
-        {
-          _id: data._id,
-          name: data.name,
-          email: data.email,
-        },
-        data.access_token
-      );
+      // cookie already set by server
+      await checkAuth(); // load user from /auth/me
 
       router.push("/");
     } catch (err: any) {

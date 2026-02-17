@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import api from "@/services/api";
 
 type User = {
   _id: string;
@@ -9,29 +9,26 @@ type User = {
 
 type AuthStore = {
   user: User | null;
-  token: string | null;
-  hasHydrated: boolean;
-  setAuth: (user: User, token: string) => void;
-  logout: () => void;
-  setHasHydrated: (state: boolean) => void;
+  isCheckingAuth: boolean;
+  checkAuth: () => Promise<void>;
+  logout: () => Promise<void>;
 };
 
-export const useAuthStore = create<AuthStore>()(
-  persist(
-    (set) => ({
-      user: null,
-      token: null,
-      hasHydrated: false,
+export const useAuthStore = create<AuthStore>((set) => ({
+  user: null,
+  isCheckingAuth: true,
 
-      setAuth: (user, token) => set({ user, token }),
-      logout: () => set({ user: null, token: null }),
-      setHasHydrated: (state) => set({ hasHydrated: state }),
-    }),
-    {
-      name: "auth-storage",
-      onRehydrateStorage: () => (state) => {
-        state?.setHasHydrated(true);
-      },
+  checkAuth: async () => {
+    try {
+      const res = await api.get("/auth/me");
+      set({ user: res.data, isCheckingAuth: false });
+    } catch {
+      set({ user: null, isCheckingAuth: false });
     }
-  )
-);
+  },
+
+  logout: async () => {
+    await api.post("/auth/logout");
+    set({ user: null });
+  },
+}));
