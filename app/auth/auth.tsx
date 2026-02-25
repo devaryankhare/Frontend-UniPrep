@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
+import { Mail, Lock, User, Eye, EyeOff, Loader2 } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 
 export default function AuthForm() {
@@ -224,7 +224,6 @@ export default function AuthForm() {
                 ) : (
                   <>
                     {isLogin ? "Sign in" : "Create account"}
-                    <ArrowRight className="w-4 h-4" />
                   </>
                 )}
               </motion.button>
@@ -259,7 +258,6 @@ export default function AuthForm() {
                 className="font-semibold text-blue-600 hover:text-blue-700 transition-colors duration-200 inline-flex items-center gap-1"
               >
                 {isLogin ? "Sign up" : "Sign in"}
-                <ArrowRight className="w-3 h-3" />
               </button>
             </p>
           </div>
