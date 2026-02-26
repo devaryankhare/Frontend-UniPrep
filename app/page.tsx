@@ -7,6 +7,7 @@ import Feature from "./components/Feature";
 import Courses from "./components/Courses";
 import Usp from "./components/Usp";
 import Reviews from "./components/Review";
+import Faq from "./components/faq";
 
 export default function Home() {
   const logos = ["/logos/du.png", "/logos/srcc.png", "/logos/jnu.png", "/logos/st.png"];
@@ -35,6 +36,8 @@ export default function Home() {
       <Usp />
 
       <Reviews />
+
+      <Faq />
     </main>
   );
 }
