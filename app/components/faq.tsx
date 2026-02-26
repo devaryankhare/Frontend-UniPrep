@@ -1,10 +1,9 @@
 "use client";
-
 import { useState } from "react";
 import Image from "next/image";
 
 export default function Faq() {
-  const [openIndex, setOpenIndex] = useState(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const faqs = [
     {
@@ -29,7 +28,7 @@ export default function Faq() {
     },
   ];
 
-  const toggleFaq = (index) => {
+  const toggleFaq = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
