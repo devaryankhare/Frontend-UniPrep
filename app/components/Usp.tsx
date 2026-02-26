@@ -32,8 +32,12 @@ export default function Usp() {
   ];
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-8 lg:p-16">
-      <div className="max-w-6xl w-full mx-auto">
+    <main className="min-h-screen py-12 bg-white rounded-t-4xl border-t border-neutral-200">
+    <div className="flex justify-center items-center">
+        <h1 className="max-w-xl text-center text-6xl text-black">Steady progress, endless potential</h1>
+    </div>
+    <div className="flex items-center justify-center p-8 lg:p-16">
+        <div className="max-w-6xl w-full mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16 items-center">
           
           {/* Left Column */}
@@ -79,6 +83,7 @@ export default function Usp() {
 
         </div>
       </div>
+    </div>
     </main>
   );
 }

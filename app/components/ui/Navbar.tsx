@@ -150,11 +150,11 @@ export default function Navbar() {
             ) : (
               <Link
                 href="/auth"
-                className="group relative inline-flex items-center gap-1.5 px-5 py-2 text-sm font-medium text-white bg-slate-900 rounded-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-slate-900/25 hover:-translate-y-0.5"
+                className="group relative inline-flex items-center gap-1.5 px-5 py-2 text-sm text-white bg-linear-to-br from-blue-500 to-blue-600 rounded-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-slate-900/25 hover:-translate-y-0.5"
               >
                 <span className="relative z-10">Get Started</span>
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600"
+                  className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600"
                   initial={{ x: "100%" }}
                   whileHover={{ x: 0 }}
                   transition={{ duration: 0.3 }}
@@ -212,7 +212,7 @@ export default function Navbar() {
                     <Link
                       href="/auth"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex items-center justify-center w-full px-4 py-3 text-base font-medium text-white bg-slate-900 rounded-2xl hover:bg-slate-800 transition-colors duration-200"
+                      className="flex items-center justify-center w-full px-4 py-3 text-base font-medium text-white bg-linear-to-br from-blue-500 to-blue-600 rounded-2xl transition-colors duration-200"
                     >
                       Get Started
                     </Link>
