@@ -5,6 +5,7 @@ import Grid from "./components/ui/grid";
 import ImageCarousel from "./components/ui/infiniteCarousal";
 import Feature from "./components/Feature";
 import Courses from "./components/Courses";
+import Usp from "./components/Usp";
 
 export default function Home() {
   const logos = ["/logos/du.png", "/logos/srcc.png", "/logos/jnu.png", "/logos/st.png"];
@@ -29,6 +30,8 @@ export default function Home() {
       </div>
 
       <Courses />
+
+      <Usp />
     </main>
   );
 }
