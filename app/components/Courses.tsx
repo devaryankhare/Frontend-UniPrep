@@ -6,15 +6,15 @@ export default async function Courses() {
   const featuredMocks = await getFeaturedMocks(3);
 
   return (
-    <section className="relative py-20 bg-gradient-to-b from-gray-50 to-white">
+    <section className="relative py-20 bg-linear-to-b from-gray-50 to-white">
       <div className="mx-auto max-w-6xl px-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-14 gap-8">
           <div>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl md:text-5xl text-black mb-4">
               Practice with Real Mock Tests
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl">
+            <p className="text-lg text-neutral-800 max-w-2xl">
               Full-length exam simulations designed to mirror the real CUET
               experience. Track performance, analyze results, and improve with
               structured practice.

@@ -79,9 +79,9 @@ export default function Hero() {
         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mt-4">
           <Link 
             href="/login" 
-            className="group relative inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white transition-all duration-200 bg-gray-900 rounded-full hover:bg-gray-800 hover:shadow-lg hover:shadow-gray-900/25 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+            className="group relative inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white transition-all duration-300 bg-gray-900 rounded-full hover:bg-gray-800 hover:shadow-lg hover:shadow-gray-900/25 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
           >
-            Start Free Trial
+            Start Practice
             <svg className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
