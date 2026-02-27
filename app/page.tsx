@@ -1,4 +1,3 @@
-"use client";
 import Navbar from "./components/ui/Navbar";
 import Hero from "./components/Hero";
 import Grid from "./components/ui/grid";
