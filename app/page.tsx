@@ -8,11 +8,12 @@ import Courses from "./components/Courses";
 import Usp from "./components/Usp";
 import Reviews from "./components/Review";
 import Faq from "./components/faq";
+import Footer from "./components/Footer";
 
 export default function Home() {
   const logos = ["/logos/du.png", "/logos/srcc.png", "/logos/jnu.png", "/logos/st.png"];
   return (
-    <main className="bg-linear-to-br from-orange-100 via-white to-orange-100">
+    <main className="bg-white">
       <Navbar />
       <Hero />
 
@@ -38,6 +39,8 @@ export default function Home() {
       <Reviews />
 
       <Faq />
+
+      <Footer />
     </main>
   );
 }
