@@ -52,7 +52,7 @@ export default function ImageCarousel({ images, speed = 120 }: ImageCarouselProp
         {duplicatedImages.map((src, index) => (
           <div 
             key={index} 
-            className="relative h-24 w-60 shrink-0 transition-all grayscale duration-300 hover:grayscale-0"
+            className="relative h-24 w-60 shrink-0 transition-all duration-300 hover:scale-110"
           >
             <Image
               src={src}
