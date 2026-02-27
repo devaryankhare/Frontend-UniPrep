@@ -5,14 +5,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { Menu, X, ChevronDown, LogOut, User as UserIcon } from "lucide-react";
 import Image from "next/image";
-
+import { useRouter } from "next/navigation";
 export default function Navbar() {
   const supabase = createClient();
   const [user, setUser] = useState<any>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-
+ const router = useRouter();
   useEffect(() => {
     const getUser = async () => {
       const {
@@ -132,7 +132,7 @@ export default function Navbar() {
                     >
                       <div className="p-3 border-b border-slate-100">
                         <p className="text-sm font-semibold text-slate-900 truncate">{getDisplayName()}</p>
-                        <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                        <p className="text-xs text-slate-500 truncate" onClick={()=>router.push("/profile")}>{user.email}</p>
                       </div>
                       <div className="p-1">
                         <button

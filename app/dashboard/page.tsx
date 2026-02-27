@@ -1,16 +1,17 @@
-import { createClient } from "@/lib/supabase/server"
-import { redirect } from "next/navigation"
-import Navbar from "../components/ui/Navbar"
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import Link from "next/link";
+import Navbar from "../components/ui/Navbar";
 
 export default async function Dashboard() {
-  const supabase = await createClient()
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/auth")
+    redirect("/auth");
   }
 
   return (
@@ -18,8 +19,16 @@ export default async function Dashboard() {
       <div>
         <Navbar />
       </div>
+
       <h1 className="text-black">Dashboard</h1>
       <p className="text-black">Logged in as: {user.email}</p>
+
+      <Link
+        href="/profile"
+        className="inline-block mt-4 bg-blue-600 text-white px-4 py-2 rounded"
+      >
+        Update Profile
+      </Link>
     </main>
-  )
+  );
 }
