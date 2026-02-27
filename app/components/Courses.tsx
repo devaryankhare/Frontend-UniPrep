@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getFeaturedMocks } from "@/lib/mock-tests";
+import { HiOutlineClock } from "react-icons/hi2";
 
 export default async function Courses() {
   const featuredMocks = await getFeaturedMocks(3);
@@ -34,14 +35,11 @@ export default async function Courses() {
             <Link
               key={mock.id}
               href={`/mock-tests/${mock.id}`}
-              className="group relative bg-white rounded-2xl p-8 border border-gray-200 shadow-sm hover:shadow-xl transition duration-300"
+              className="group relative bg-white rounded-2xl p-8 border border-neutral-200 shadow-xl hover:shadow-xl transition duration-300"
             >
               <div className="flex justify-between items-start mb-6">
-                <span className="text-sm px-3 py-1 bg-gray-100 rounded-full text-gray-600">
-                  CUET {mock.year}
-                </span>
-                <span className="text-sm font-medium text-gray-500">
-                  {mock.total_marks} Marks
+                <span className="text-sm px-3 py-1 bg-emerald-500 rounded-full text-white font-bold leading-relaxed">
+                  {mock.year}
                 </span>
               </div>
 
@@ -49,13 +47,26 @@ export default async function Courses() {
                 {mock.title}
               </h3>
 
-              <div className="flex justify-between text-sm text-gray-500 mt-6">
-                <span>⏱ {mock.duration_minutes} mins</span>
-                <span>📊 Full-Length Mock</span>
+              <div className="flex justify-between items-center mt-6">
+                <span className="text-white text-sm px-4 py-2 rounded-full flex gap-1 items-center justify-center bg-black">
+                  <HiOutlineClock className="text-lg" /> {mock.duration_minutes} mins
+                </span>
+                <span className="text-black">
+                  <span className="bg-black text-white px-4 py-2 rounded-full">{mock.total_marks}</span> Marks
+                </span>
               </div>
 
-              <div className="mt-8 text-sm font-medium text-black group-hover:underline">
-                Start Practice →
+              <div className="p-4 my-6 bg-neutral-50 shadow-md border border-neutral-200 rounded-xl">
+                <ul className="text-black list-disc text-sm m-2">
+                  <li>Each question carries 5 marks.</li>
+                  <li>Negative marking applies where specified.</li>
+                  <li>Test will auto-submit when time expires.</li>
+                  <li>Do not refresh or close the browser during the test.</li>
+                </ul>
+              </div>
+
+              <div className="ext-sm flex w-fit px-4 py-2 rounded-full font-medium text-white bg-linear-to-br from-blue-400 to-blue-600 hover:shadow-xl hover:scale-110 duration-300">
+                Start Now
               </div>
             </Link>
           ))}
