@@ -19,10 +19,10 @@ export default function FinalCta() {
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
-                    <Link href="/login" className="w-full sm:w-auto px-8 py-4 bg-white text-blue-600 rounded-full font-bold text-lg hover:bg-gray-50 hover:shadow-2xl hover:shadow-white/20 transition-all duration-300 transform hover:-translate-y-1 block text-center">
+                    <Link href="/auth" className="w-full sm:w-auto px-8 py-4 bg-white text-blue-600 rounded-full font-bold text-lg hover:bg-gray-50 hover:shadow-2xl hover:shadow-white/20 transition-all duration-300 transform hover:-translate-y-1 block text-center">
                         Attempt Free Mock
                     </Link>
-                    <Link href="/login" className="w-full sm:w-auto px-8 py-4 bg-blue-600 backdrop-blur-sm border-2 border-cyan-200 text-white rounded-full font-bold text-lg hover:bg-blue-700 hover:border-white transition-all duration-300 transform hover:-translate-y-1 block text-center">
+                    <Link href="/auth" className="w-full sm:w-auto px-8 py-4 bg-blue-600 backdrop-blur-sm border-2 border-cyan-200 text-white rounded-full font-bold text-lg hover:bg-blue-700 hover:border-white transition-all duration-300 transform hover:-translate-y-1 block text-center">
                         Join Mentorship
                     </Link>
                 </div>

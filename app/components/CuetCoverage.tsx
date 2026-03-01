@@ -64,7 +64,7 @@ export default function CuetCoverage() {
                     <div className="bg-gradient-to-br from-blue-600 to-indigo-700 p-8 rounded-3xl shadow-xl flex flex-col justify-center items-center text-center text-white lg:col-span-1">
                         <h3 className="text-2xl font-bold mb-4">Ready to start?</h3>
                         <p className="opacity-90 mb-6">Get access to all subjects and mocks instantly.</p>
-                        <Link href="/login" className="bg-white text-blue-600 px-8 py-3 rounded-full font-bold hover:bg-opacity-90 transition-all shadow-lg text-center block w-fit">
+                        <Link href="/auth" className="bg-white text-blue-600 px-8 py-3 rounded-full font-bold hover:bg-opacity-90 transition-all shadow-lg text-center block w-fit">
                             Enroll Now
                         </Link>
                     </div>
