@@ -1,8 +1,11 @@
 import Navbar from "./components/ui/Navbar";
 import Hero from "./components/Hero";
+import StatsStrip from "./components/StatsStrip";
 import Grid from "./components/ui/grid";
 import ImageCarousel from "./components/ui/infiniteCarousal";
 import Feature from "./components/Feature";
+import HowItWorks from "./components/HowItWorks";
+import CuetCoverage from "./components/CuetCoverage";
 import Courses from "./components/Courses";
 import Usp from "./components/Usp";
 import Reviews from "./components/Review";
@@ -15,6 +18,7 @@ export default function Home() {
     <main className="bg-white">
       <Navbar />
       <Hero />
+      <StatsStrip />
 
       <div className="py-12 max-w-6xl mx-auto flex items-center justify-center">
         <Grid />
@@ -30,6 +34,10 @@ export default function Home() {
       <div className="py-8">
         <Feature />
       </div>
+
+      <HowItWorks />
+
+      <CuetCoverage />
 
       <Courses />
 
