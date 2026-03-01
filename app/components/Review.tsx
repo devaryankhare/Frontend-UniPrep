@@ -4,50 +4,56 @@ import { useState } from "react";
 export default function Reviews() {
   const [showAll, setShowAll] = useState(false);
 
-  const reviews = [
-    {
-      id: 1,
-      name: "Sarah Johnson",
-      role: "Product Manager",
-      content: "This platform completely transformed how I approach learning. The courses are well-structured and the instructors are top-notch. I've been able to upskill in just weeks what would have taken months elsewhere.",
-      rating: 5,
-    },
-    {
-      id: 2,
-      name: "Michael Chen",
-      role: "Software Engineer",
-      content: "The flexibility to learn at my own pace while working full-time has been invaluable. The course library is extensive and covers exactly what I needed to advance my career.",
-      rating: 5,
-    },
-    {
-      id: 3,
-      name: "Emily Rodriguez",
-      role: "Marketing Director",
-      content: "I was skeptical at first, but the quality of content exceeded my expectations. The certificates have already helped me stand out in job interviews.",
-      rating: 5,
-    },
-    {
-      id: 4,
-      name: "David Kim",
-      role: "Data Analyst",
-      content: "The expert instructors bring real-world experience that you can't find in textbooks. I've applied what I learned immediately in my current role.",
-      rating: 5,
-    },
-    {
-      id: 5,
-      name: "Lisa Thompson",
-      role: "UX Designer",
-      content: "Finally, a platform that understands adult learners. The support team is responsive and the community is incredibly helpful.",
-      rating: 5,
-    },
-    {
-      id: 6,
-      name: "James Wilson",
-      role: "Startup Founder",
-      content: "Investing in this platform was one of the best decisions for my professional development. The ROI has been tremendous.",
-      rating: 5,
-    },
-  ];
+const reviews = [
+  {
+    id: 1,
+    name: "Aarav Sharma",
+    role: "CUET 2025 Aspirant",
+    content:
+      "The mock tests on Uniprep closely matched the actual CUET pattern. The AI analysis helped me identify time management issues, and I was able to improve my score steadily over a few weeks.",
+    rating: 5,
+  },
+  {
+    id: 2,
+    name: "Priya Verma",
+    role: "CUET Aspirant",
+    content:
+      "What I found most useful was the automatic error tracking. Revising my mistakes before each mock made a noticeable difference in my accuracy. The platform is simple and focused.",
+    rating: 5,
+  },
+  {
+    id: 3,
+    name: "Rohan Gupta",
+    role: "CUET 2025 Candidate",
+    content:
+      "I liked the structured mock series and the detailed performance breakdown. It gave me clarity on which subjects needed more attention. Overall, a very practical preparation tool.",
+    rating: 5,
+  },
+  {
+    id: 4,
+    name: "Ananya Singh",
+    role: "CUET Aspirant",
+    content:
+      "The mentorship sessions were genuinely helpful for planning my preparation strategy. The guidance on subject selection and mock review saved me a lot of time.",
+    rating: 5,
+  },
+  {
+    id: 5,
+    name: "Kunal Mehta",
+    role: "CUET 2024 Aspirant",
+    content:
+      "The interface is clean and the handwritten notes are great for quick revision. I especially appreciate how everything — mocks, analysis, and revision — is in one place.",
+    rating: 5,
+  },
+  {
+    id: 6,
+    name: "Sneha Patel",
+    role: "CUET Aspirant",
+    content:
+      "After using Uniprep for a month, I feel much more confident about the exam. The mock environment feels realistic and the feedback is actually actionable.",
+    rating: 5,
+  },
+];
 
   const initialReviews = reviews.slice(0, 3);
   const additionalReviews = reviews.slice(3);
@@ -59,11 +65,11 @@ export default function Reviews() {
         
         {/* Header */}
         <div className="flex flex-col items-center justify-center mb-16">
-          <h2 className="text-4xl text-black max-w-xl text-center mb-4">
-            Choose us because of our experience
+          <h2 className="text-4xl text-blue-900 max-w-xl text-center mb-4">
+            Testimonials
           </h2>
           <p className="text-black text-lg text-center max-w-xl mx-auto">
-            Join thousands of satisfied learners who have transformed their careers through our platform.
+            What CUET Aspirants Say about Uniprep
           </p>
         </div>
 
