@@ -74,7 +74,7 @@ export default function Hero() {
         <div className="flex flex-col items-center gap-4">
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mt-4">
             <Link
-              href="/login"
+              href="/mock-tests"
               className="group relative inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white transition-all duration-300 bg-gray-900 rounded-full hover:bg-gray-800 hover:shadow-lg hover:shadow-gray-900/25 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
             >
               Start Free Mock
@@ -83,7 +83,7 @@ export default function Hero() {
               </svg>
             </Link>
 
-            <Link
+            {/* <Link
               href="/explore"
               className="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-gray-700 transition-all duration-200 bg-white border border-gray-200 rounded-full hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200"
             >
@@ -92,7 +92,7 @@ export default function Hero() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               Explore CUET Plans
-            </Link>
+            </Link> */}
           </div>
 
           {/* Trust Line */}
