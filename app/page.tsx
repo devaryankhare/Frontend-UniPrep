@@ -12,9 +12,6 @@ import Reviews from "./components/Review";
 import Faq from "./components/faq";
 import Footer from "./components/Footer";
 import PreferenceSupport from "./components/PreferenceSupport";
-import AfterAdmissionSupport from "./components/AfterAdmissionSupport";
-import TargetUniversities from "./components/TargetUniversities";
-import FinalCta from "./components/FinalCta";
 
 export default function Home() {
   const logos = ["/logos/du.png", "/logos/srcc.png", "/logos/jnu.png", "/logos/st.png"];
@@ -45,10 +42,6 @@ export default function Home() {
 
       <PreferenceSupport />
 
-      <AfterAdmissionSupport />
-
-      <TargetUniversities />
-
       <Courses />
 
       <Usp />
@@ -56,8 +49,6 @@ export default function Home() {
       <Reviews />
 
       <Faq />
-
-      <FinalCta />
 
       <Footer />
     </main>
