@@ -44,7 +44,7 @@ export default function Faq() {
           {/* Left Side - Image */}
           <div className="relative w-full aspect-square max-w-md mx-auto lg:max-w-none">
             <Image
-              src="/assets/faq.avif"
+              src="/assets/faq.jpeg"
               alt="FAQ Illustration"
               fill
               className="object-cover rounded-2xl"
