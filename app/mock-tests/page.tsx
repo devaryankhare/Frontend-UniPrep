@@ -26,7 +26,7 @@ export default async function MockTestsPage({
           // No-op (not needed here)
         },
       },
-    }
+    },
   );
 
   const selectedExam = resolvedSearchParams?.exam || "all";
@@ -49,111 +49,119 @@ export default async function MockTestsPage({
   const totalPages = count ? Math.ceil(count / PAGE_SIZE) : 1;
 
   return (
-    <main>
+    <main className="flex flex-col items-center justify-center">
       <div>
         <Navbar />
       </div>
-      <div className="p-8">
-      {/* Domain + Subject Filter */}
-      {(() => {
-        const domainSubjects: Record<string, string[]> = {
-          Science: ["physics", "chemistry", "biology", "maths"],
-          Humanities: ["history", "polity", "geography", "economics"],
-          Commerce: ["accountancy", "business", "economics", "maths"],
-          English: ["Grammar", "Comprehension"],
-          GAT: ["reasoning", "current affairs", "quantitative aptitude"],
-        };
+      <div className="p-8 max-w-6xl mx-auto w-full">
+        {/* Domain + Subject Filter */}
+        {(() => {
+          const domainSubjects: Record<string, string[]> = {
+            Science: ["physics", "chemistry", "biology", "maths"],
+            Humanities: ["history", "polity", "geography", "economics"],
+            Commerce: ["accountancy", "business", "economics", "maths"],
+            English: ["Grammar", "Comprehension"],
+            GAT: ["reasoning", "current affairs", "quantitative aptitude"],
+          };
 
-        const subjects =
-          selectedDomain !== "all" && domainSubjects[selectedDomain]
-            ? domainSubjects[selectedDomain]
-            : [];
+          const subjects =
+            selectedDomain !== "all" && domainSubjects[selectedDomain]
+              ? domainSubjects[selectedDomain]
+              : [];
 
-        return (
-          <>
-            {/* Domain Filter */}
-            <div className="flex gap-4 mb-4 flex-wrap">
-              {["all", ...Object.keys(domainSubjects)].map((domain) => (
-                <Link
-                  key={domain}
-                  href={`/mock-tests?domain=${domain}`}
-                  className={`px-4 py-2 rounded-full border ${
-                    selectedDomain === domain
-                      ? "bg-black text-white"
-                      : "bg-gray-200 text-black"
-                  }`}
-                >
-                  {domain}
-                </Link>
-              ))}
-            </div>
-
-            {/* Subject Filter (only if domain selected) */}
-            {selectedDomain !== "all" && (
-              <div className="flex gap-4 mb-6 flex-wrap">
-                {subjects.map((subject) => (
+          return (
+            <>
+              {/* Domain Filter */}
+              <div className="flex gap-4 mb-4 flex-wrap">
+                {["all", ...Object.keys(domainSubjects)].map((domain) => (
                   <Link
-                    key={subject}
-                    href={`/mock-tests?domain=${selectedDomain}&exam=${subject}`}
-                    className={`px-4 py-2 rounded-full border ${
-                      selectedExam === subject
-                        ? "bg-blue-500 text-white"
+                    key={domain}
+                    href={`/mock-tests?domain=${domain}`}
+                    className={`px-4 py-2 rounded-full ${
+                      selectedDomain === domain
+                        ? "bg-linear-to-br from-blue-500 to-blue-600 text-white"
                         : "bg-neutral-200 text-black"
                     }`}
                   >
-                    {subject.charAt(0).toUpperCase() + subject.slice(1)}
+                    {domain}
                   </Link>
                 ))}
               </div>
-            )}
-          </>
-        );
-      })()}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tests?.map((test) => (
-          <div
-            key={test.id}
-            className="border rounded-lg p-4 shadow-sm hover:shadow-md transition"
-          >
-            <h2 className="text-lg font-semibold">{test.title}</h2>
-            <p className="text-sm text-gray-500">
-              Duration: {test.duration_minutes} mins
-            </p>
-            <p className="text-sm text-gray-500">
-              Total Marks: {test.total_marks}
-            </p>
 
-            <Link
-              href={`/mock-tests/${test.id}`}
-              className="inline-block mt-4 px-4 py-2 bg-black text-white rounded-md"
+              {/* Subject Filter (only if domain selected) */}
+              {selectedDomain !== "all" && (
+                <div className="flex gap-4 mb-6 flex-wrap">
+                  {subjects.map((subject) => (
+                    <Link
+                      key={subject}
+                      href={`/mock-tests?domain=${selectedDomain}&exam=${subject}`}
+                      className={`px-4 py-2 rounded-full ${
+                        selectedExam === subject
+                          ? "bg-linear-to-br from-blue-400 to-blue-500 text-white"
+                          : "bg-neutral-200 text-black"
+                      }`}
+                    >
+                      {subject.charAt(0).toUpperCase() + subject.slice(1)}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </>
+          );
+        })()}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {tests?.map((test) => (
+            <div
+              key={test.id}
+              className="relative rounded-2xl p-4 shadow-sm hover:shadow-md transition overflow-hidden"
             >
-              Start Test
+              {/* Watermark Logo */}
+              <img
+                src="/assets/nta.jpeg"
+                alt="NTA"
+                className="absolute top-3 right-3 w-16 h-16 opacity-50 pointer-events-none select-none"
+              />
+              <h2 className="text-xl font-semibold">{test.title}</h2>
+              <div className="flex justify-between my-8">
+                <p className="text-sm text-black">
+                  {test.duration_minutes} mins
+                </p>
+                <p className="text-sm text-black">
+                  Total Marks: {test.total_marks}
+                </p>
+              </div>
+
+              <Link
+                href={`/mock-tests/${test.id}`}
+                className="inline-block px-4 py-2 bg-emerald-300 border border-black text-black rounded-xl"
+              >
+                Start Test
+              </Link>
+            </div>
+          ))}
+        </div>
+
+        {/* Pagination */}
+        <div className="flex justify-center mt-8 gap-2">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <Link
+              key={i}
+              href={`/mock-tests?page=${i + 1}&exam=${selectedExam}`}
+              className={`px-3 py-1 border rounded-full ${
+                currentPage === i + 1
+                  ? "bg-blue-500 text-white"
+                  : "bg-neutral-400 text-black"
+              }`}
+            >
+              {i + 1}
             </Link>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      {/* Pagination */}
-      <div className="flex justify-center mt-8 gap-2">
-        {Array.from({ length: totalPages }, (_, i) => (
-          <Link
-            key={i}
-            href={`/mock-tests?page=${i + 1}&exam=${selectedExam}`}
-            className={`px-3 py-1 border rounded-full ${
-              currentPage === i + 1
-                ? "bg-blue-500 text-white"
-                : "bg-neutral-400 text-black"
-            }`}
-          >
-            {i + 1}
-          </Link>
-        ))}
+      <div className="w-full">
+        <Footer />
       </div>
-    </div>
-
-    <div>
-      <Footer />
-    </div>
     </main>
   );
 }
