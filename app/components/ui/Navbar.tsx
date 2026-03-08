@@ -7,6 +7,7 @@ import { Menu, X, ChevronDown, LogOut, User as UserIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
+import { IoMdPerson } from "react-icons/io";
 export default function Navbar() {
   const supabase = createClient();
   const [user, setUser] = useState<User | null>(null);
@@ -81,7 +82,7 @@ export default function Navbar() {
     { title: "Home", link: "/" },
     { title: "PYQs", link: "/pyqs" },
     { title: "Materials", link: "/materials" },
-    { title: "FAQs", link: "/faqs" },
+    { title: "Notice", link: "/notice" },
   ];
 
   const getInitials = () => {
@@ -174,10 +175,11 @@ export default function Navbar() {
                         <p className="text-sm font-semibold text-slate-900 truncate">{getDisplayName()}</p>
                         <p className="text-xs text-slate-500 truncate" onClick={()=>router.push("/profile")}>{user.email}</p>
                       </div>
-                      <div className="p-1">
+                      <div className="p-1 flex flex-col justify-center items-center">
+                        <Link className="flex w-full gap-2 items-center justify-start hover:bg-neutral-100 duration-300 px-3 py-2" href="/profile"><IoMdPerson />Profile</Link>
                         <button
                           onClick={handleLogout}
-                          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                          className="w-full flex border-t border-t-neutral-100 items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200"
                         >
                           <LogOut className="w-4 h-4" />
                           Sign out
