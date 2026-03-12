@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getFeaturedMocks } from "@/lib/mock-tests";
-import { HiOutlineClock } from "react-icons/hi2";
+import { GoArrowUpRight } from "react-icons/go";
 
 export default async function Courses() {
   const featuredMocks = await getFeaturedMocks(3);
@@ -45,8 +45,8 @@ export default async function Courses() {
                   The test is of {mock.duration_minutes} minutes and is of {mock.total_marks} Marks
               </span>
 
-              <div className="text-sm flex w-fit px-4 py-2 rounded-xl font-medium text-white bg-linear-to-br from-black via-neutral-700 to-black hover:shadow-xl hover:scale-110 duration-300">
-                Start Now
+              <div className="text-sm flex items-center justify-center gap-2 w-fit px-4 py-2 rounded-xl font-medium text-white bg-linear-to-br from-black via-neutral-700 to-black hover:shadow-xl hover:scale-110 duration-300">
+                Start Now <GoArrowUpRight className="text-lg" />
               </div>
             </Link>
           ))}
