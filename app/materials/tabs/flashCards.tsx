@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import Skeletal from "@/app/components/ui/skeletal";
 import Loader from "@/app/components/ui/loader";
 import { MdOutlineArrowOutward } from "react-icons/md";
+import { MdOutlineArrowBack, MdOutlineArrowForward } from "react-icons/md";
 
 const supabase = createClient();
 interface Flashcard {
@@ -30,6 +31,11 @@ export default function FlashCards() {
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [newWord, setNewWord] = useState("");
   const [newMeaning, setNewMeaning] = useState("");
+  const [newType, setNewType] = useState("");
+  const [newHook, setNewHook] = useState("");
+  const [newExample, setNewExample] = useState("");
+  const [newSynonyms, setNewSynonyms] = useState("");
+  const [newAntonyms, setNewAntonyms] = useState("");
   const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
   const cardRefs = useRef<Map<number, HTMLDivElement>>(new Map());
   const [loading, setLoading] = useState(true);
@@ -96,19 +102,65 @@ export default function FlashCards() {
 
   async function handleAddFlashcard() {
     if (!newWord.trim() || !newMeaning.trim()) return;
-    const { data, error } = await supabase
+    // Split synonyms and antonyms by comma, trim whitespace, and filter out empty strings
+    const synonymsArr = newSynonyms
+      .split(",")
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+    const antonymsArr = newAntonyms
+      .split(",")
+      .map((a) => a.trim())
+      .filter((a) => a.length > 0);
+
+    // Get current user to attach user_id
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData?.user?.id) {
+      console.error("Error getting current user:", userError?.message || userError || "No user found");
+      return;
+    }
+    const user_id = userData.user.id as string;
+
+    const flashcardToAdd: Flashcard = {
+      word: newWord,
+      meaning: newMeaning,
+      type: newType || undefined,
+      hook: newHook || undefined,
+      example: newExample || undefined,
+      synonyms: synonymsArr.length > 0 ? synonymsArr : undefined,
+      antonyms: antonymsArr.length > 0 ? antonymsArr : undefined,
+      user_id,
+    };
+    const { error } = await supabase
       .from("flash_cards")
-      .insert([{ word: newWord, meaning: newMeaning }])
-      .select();
+      .insert([flashcardToAdd]);
     if (error) {
       console.error("Error adding flashcard:", error.message || error);
       return;
     }
-    if (data) {
-      setFlashcards((prev) => [...prev, data[0]]);
-      setNewWord("");
-      setNewMeaning("");
+    // After adding, fetch the updated list from DB so UI is in sync
+    setLoading(true);
+    const { data: refreshed, error: fetchError } = await supabase
+      .from("flash_cards")
+      .select(
+        "word, meaning, type, synonyms, antonyms, hook, example, user_id",
+      )
+      .not("user_id", "is", null);
+    if (fetchError) {
+      console.error("Error fetching user flashcards after add:", fetchError.message || fetchError);
+      setLoading(false);
+      return;
     }
+    if (refreshed) {
+      setFlashcards(refreshed);
+    }
+    setLoading(false);
+    setNewWord("");
+    setNewMeaning("");
+    setNewType("");
+    setNewHook("");
+    setNewExample("");
+    setNewSynonyms("");
+    setNewAntonyms("");
   }
 
   const filteredFlashcards = flashcards.filter(
@@ -186,7 +238,7 @@ export default function FlashCards() {
           onClick={() => setActiveTab("search")}
           disabled={activeTab === "search"}
         >
-          Search
+          View All Flashcards
         </button>
         <button
           className="bg-emerald-300 border text-black rounded-xl px-4 py-2"
@@ -348,13 +400,13 @@ export default function FlashCards() {
                   <button
                     onClick={handlePrev}
                     disabled={currentIndex === 0 && !hasPrevPage}
-                    className={`px-4 py-2 rounded-xl ${
+                    className={`px-4 py-2 rounded-xl flex border gap-2 justify-center items-center ${
                       currentIndex === 0 && !hasPrevPage
                         ? "bg-gray-300 cursor-not-allowed"
                         : "bg-emerald-300 text-black"
                     }`}
                   >
-                    Prev
+                    <MdOutlineArrowBack />Prev
                   </button>
                   <button
                     onClick={handleNext}
@@ -363,7 +415,7 @@ export default function FlashCards() {
                         !hasNextPage) ||
                       flashcards.length === 0
                     }
-                    className={`px-4 py-2 rounded-xl ${
+                    className={`px-4 py-2 flex items-center justify-center border gap-2 rounded-xl ${
                       (currentIndex === flashcards.length - 1 &&
                         !hasNextPage) ||
                       flashcards.length === 0
@@ -371,7 +423,7 @@ export default function FlashCards() {
                         : "bg-emerald-300 text-black"
                     }`}
                   >
-                    Next
+                    Next <MdOutlineArrowForward />
                   </button>
                 </div>
               </>
@@ -388,26 +440,68 @@ export default function FlashCards() {
             </div>
           ) : (
             <>
-              <div>
+              <div className="flex flex-col gap-2 bg-neutral-100 rounded-xl p-4 mb-4 max-w-lg">
                 <input
                   type="text"
                   placeholder="Word"
                   value={newWord}
                   onChange={(e) => setNewWord(e.target.value)}
+                  className="px-3 py-2 rounded border border-gray-300"
                 />
                 <textarea
                   placeholder="Meaning"
                   value={newMeaning}
                   onChange={(e) => setNewMeaning(e.target.value)}
+                  className="px-3 py-2 rounded border border-gray-300"
                 />
-                <button onClick={handleAddFlashcard}>Add Flashcard</button>
+                <input
+                  type="text"
+                  placeholder="Type (e.g., noun, verb)"
+                  value={newType}
+                  onChange={(e) => setNewType(e.target.value)}
+                  className="px-3 py-2 rounded border border-gray-300"
+                />
+                <input
+                  type="text"
+                  placeholder="Hook"
+                  value={newHook}
+                  onChange={(e) => setNewHook(e.target.value)}
+                  className="px-3 py-2 rounded border border-gray-300"
+                />
+                <input
+                  type="text"
+                  placeholder="Example"
+                  value={newExample}
+                  onChange={(e) => setNewExample(e.target.value)}
+                  className="px-3 py-2 rounded border border-gray-300"
+                />
+                <input
+                  type="text"
+                  placeholder="Synonyms (comma-separated)"
+                  value={newSynonyms}
+                  onChange={(e) => setNewSynonyms(e.target.value)}
+                  className="px-3 py-2 rounded border border-gray-300"
+                />
+                <input
+                  type="text"
+                  placeholder="Antonyms (comma-separated)"
+                  value={newAntonyms}
+                  onChange={(e) => setNewAntonyms(e.target.value)}
+                  className="px-3 py-2 rounded border border-gray-300"
+                />
+                <button
+                  onClick={handleAddFlashcard}
+                  className="bg-emerald-300 px-4 py-2 rounded-xl text-black font-semibold border mt-2"
+                >
+                  Add Flashcard
+                </button>
               </div>
-              <ul className="flex flex-wrap gap-4 mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mt-4">
                 {filteredFlashcards.map((flashcard, index) => {
                   return (
-                    <li
+                    <div
                       key={index}
-                      className="w-64 h-40 cursor-pointer"
+                      className="w-full h-98 cursor-pointer"
                       onClick={() => toggleFlip(index)}
                     >
                       <motion.div
@@ -426,6 +520,7 @@ export default function FlashCards() {
                           perspective: 1000,
                         }}
                       >
+                        {/* Front side */}
                         <div
                           style={{
                             position: "absolute",
@@ -434,7 +529,7 @@ export default function FlashCards() {
                             backfaceVisibility: "hidden",
                             backgroundColor: "black",
                             border: "1px solid #d1d5db",
-                            borderRadius: "0.5rem",
+                            borderRadius: "2rem",
                             boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
                             padding: "1rem",
                             display: "flex",
@@ -452,81 +547,86 @@ export default function FlashCards() {
                               zIndex: 2,
                             }}
                           >
-                            <div className="bg-white flex items-center justify-center rounded-full h-10 w-10 shadow">
-                              <MdOutlineArrowOutward className="text-black text-2xl" />
+                            <div className="bg-white flex items-center justify-center rounded-full h-12 w-12 shadow">
+                              <MdOutlineArrowOutward className="text-black text-4xl" />
                             </div>
                           </div>
-                          <h4 className="text-xl font-bold">
+                          <h4 className="text-3xl text-white font-bold">
                             {flashcard.word}
                           </h4>
-                          <p className="text-sm text-gray-500">
-                            {flashcard.type || ""}
+                          <p className="text-sm text-black bg-purple-300 px-4 uppercase py-2 rounded-full mt-2">
+                            # {flashcard.type || ""}
                           </p>
                         </div>
+                        {/* Back side */}
                         <div
+                          className="flex flex-col items-center justify-center gap-2 px-6 py-4"
                           style={{
                             position: "absolute",
                             width: "100%",
                             height: "100%",
                             backfaceVisibility: "hidden",
                             backgroundColor: "black",
-                            border: "1px solid black",
-                            borderRadius: "0.5rem",
+                            borderRadius: "2rem",
                             boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-                            padding: "1rem",
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            alignItems: "flex-start",
                             transform: "rotateY(180deg)",
                             overflow: "auto",
                           }}
                         >
-                          <p>
-                            <strong>Meaning:</strong> {flashcard.meaning}
-                          </p>
-                          {flashcard.synonyms &&
-                            Array.isArray(flashcard.synonyms) &&
-                            flashcard.synonyms.length > 0 && (
-                              <p>
-                                <strong>Synonyms:</strong>{" "}
-                                {flashcard.synonyms.map((syn: string, idx: number) => (
-                                  <span key={syn + idx}>
-                                    {syn}
-                                    {idx < flashcard.synonyms!.length - 1 ? ", " : ""}
-                                  </span>
-                                ))}
-                              </p>
-                            )}
-                          {flashcard.antonyms &&
-                            Array.isArray(flashcard.antonyms) &&
-                            flashcard.antonyms.length > 0 && (
-                              <p>
-                                <strong>Antonyms:</strong>{" "}
-                                {flashcard.antonyms.map((ant: string, idx: number) => (
-                                  <span key={ant + idx}>
-                                    {ant}
-                                    {idx < flashcard.antonyms!.length - 1 ? ", " : ""}
-                                  </span>
-                                ))}
-                              </p>
-                            )}
                           {flashcard.hook && (
-                            <p>
-                              <strong>Hook:</strong> {flashcard.hook}
+                            <p className="flex flex-col w-full">
+                              <strong className="text-white">Hook:</strong>
+                              <span className="text-neutral-200 text-sm">{flashcard.hook}</span>
                             </p>
                           )}
+                          <p className="flex flex-col w-full">
+                            <strong className="text-white">Meaning:</strong>
+                            <span className="text-neutral-200 text-sm">
+                              {flashcard.meaning}
+                            </span>
+                          </p>
+                          <div className="flex flex-col gap-2 justify-between w-full">
+                            {flashcard.synonyms &&
+                              Array.isArray(flashcard.synonyms) &&
+                              flashcard.synonyms.length > 0 && (
+                                <p className="flex flex-col">
+                                  <strong className="text-emerald-500">
+                                    Synonyms:
+                                  </strong>
+                                  <span className="flex flex-wrap gap-2 text-white text-sm">
+                                    {flashcard.synonyms.map((syn: string, idx: number) => (
+                                      <span className="bg-emerald-300 text-black px-4 py-2 rounded-full" key={syn + idx}>{syn}</span>
+                                    ))}
+                                  </span>
+                                </p>
+                              )}
+                            {flashcard.antonyms &&
+                              Array.isArray(flashcard.antonyms) &&
+                              flashcard.antonyms.length > 0 && (
+                                <p className="flex flex-col">
+                                  <strong className="text-red-500">
+                                    Antonyms:
+                                  </strong>
+                                  <span className="flex flex-wrap gap-2 text-white text-sm">
+                                    {flashcard.antonyms.map((ant: string, idx: number) => (
+                                      <span className="px-4 py-2 text-black bg-purple-300 rounded-full" key={ant + idx}>{ant}</span>
+                                    ))}
+                                  </span>
+                                </p>
+                              )}
+                          </div>
                           {flashcard.example && (
-                            <p>
-                              <strong>Example:</strong> {flashcard.example}
+                            <p className="flex flex-col w-full">
+                              <strong className="text-white">Example:</strong>
+                              <span className="text-neutral-200 text-sm">{flashcard.example}</span>
                             </p>
                           )}
                         </div>
                       </motion.div>
-                    </li>
+                    </div>
                   );
                 })}
-              </ul>
+              </div>
             </>
           )}
         </div>
