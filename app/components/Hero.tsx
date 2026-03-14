@@ -52,12 +52,13 @@ export default function Hero() {
           className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-center leading-[1.1] tracking-tight"
         >
           <span className="bg-clip-text text-transparent font-bold bg-linear-to-r from-gray-900 via-gray-800 to-gray-900">
-            Crack CUET with
+            All you need to Ace 
+
           </span>
           <br />
           <span className="relative inline-block mt-2">
             <span className="relative z-10 bg-clip-text text-transparent bg-linear-to-r from-blue-700 to-blue-800">
-              Smart Practice
+              CUET 2026
             </span>
             <svg className="absolute -bottom-2 left-0 w-full h-3 text-orange-300 z-0" viewBox="0 0 100 10" preserveAspectRatio="none">
               <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" />
