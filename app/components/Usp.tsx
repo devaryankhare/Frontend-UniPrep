@@ -5,31 +5,31 @@ import Image from "next/image";
 
 const leftLines = [
   {
-    title: "Unlimited Resources",
-    comment: "Discover a treasure trove of courses, tools, and resources.",
+    title: "Smart Study Resources",
+    comment: "Mocks, PYQs, and quick revision notes — all in one place.",
   },
   {
-    title: "Diverse Course Library",
-    comment: "Learn about hundreds of topics across multiple domains.",
+    title: "Live Classes & Marathons",
+    comment: "High-impact marathon sessions for last-minute revision.",
   },
   {
-    title: "Schedule-flexible",
-    comment: "Learn at your own pace with 24/7 access to all courses and materials.",
+    title: "Study Anytime",
+    comment: "Prepare at your own pace, anytime you want.",
   },
 ];
 
 const rightLines = [
   {
-    title: "50+ Expert Instructors",
-    comment: "Each instructor on our platform has years of experience.",
+    title: "CUET Ranker Mentors",
+    comment: "Learn directly from students who cracked the exam.",
   },
   {
-    title: "Industry Certificates",
-    comment: "Enhance your career prospects with recognized certifications.",
+    title: "Crash Courses",
+    comment: "Fast-track preparation before the exam.",
   },
   {
-    title: "Dedicated Support",
-    comment: "Get assistance whenever you need it with our responsive support team.",
+    title: "Real Exam Practice",
+    comment: "Mock tests designed like the actual CUET pattern.",
   },
 ];
 
@@ -137,12 +137,18 @@ export default function Usp() {
     >
       {/* Title */}
       <motion.div 
-        className="flex justify-center items-center mb-16"
+        className="flex flex-col justify-center items-center mb-16 gap-4 px-4"
         variants={titleVariants}
       >
-        <h1 className="max-w-xl text-center text-6xl text-black">
+        <h1 className="max-w-xl text-center text-4xl md:text-6xl text-black mb-4">
           Steady progress, endless potential
         </h1>
+        <h2 className="text-2xl md:text-3xl font-bold text-center text-blue-600">
+          All you need to Ace CUET 2026
+        </h2>
+        <p className="text-base md:text-lg text-center text-neutral-600 max-w-2xl mx-auto">
+          Learn from CUET rankers who have already cracked the exam.
+        </p>
       </motion.div>
 
       <div className="flex items-center justify-center p-8 lg:p-16">

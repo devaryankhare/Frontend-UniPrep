@@ -60,7 +60,7 @@ const reviews = [
   const displayedReviews = showAll ? reviews : initialReviews;
 
   return (
-    <main className="min-h-screen bg-gray-50 py-20 px-6">
+    <main id="testimonials" className="min-h-screen bg-gray-50 py-20 px-6">
       <div className="max-w-5xl mx-auto">
         
         {/* Header */}
