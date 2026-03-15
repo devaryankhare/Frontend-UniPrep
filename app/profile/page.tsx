@@ -6,6 +6,8 @@ import Navbar from "../components/ui/Navbar";
 import Link from "next/link";
 import Loader from "../components/ui/loader";
 import { IoSettings } from "react-icons/io5";
+import TodoList from "./components/todo";
+import UserFlashcardCarousel from "./components/flashCards";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -22,6 +24,16 @@ export default function ProfilePage() {
   const [memberSince, setMemberSince] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [removeAvatar, setRemoveAvatar] = useState(false);
+  interface Flashcard {
+    word: string;
+    meaning: string;
+    type?: string;
+    synonyms?: string[];
+    antonyms?: string[];
+    example?: string;
+  }
+
+  const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -58,6 +70,13 @@ export default function ProfilePage() {
         const avatar = user.user_metadata?.avatar_url || null;
         setAvatarUrl(avatar);
       }
+
+      const { data: cards } = await supabase
+        .from("flash_cards")
+        .select("word, meaning, type, synonyms, antonyms, example")
+        .eq("user_id", user.id);
+
+      if (cards) setFlashcards(cards);
 
       setLoading(false);
     }
@@ -157,10 +176,10 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="min-h-screen bg-neutral-100 flex justify-center items-start md:items-center px-4 py-8">
+    <main className="min-h-screen bg-neutral-100 flex justify-center items-start md:items-center px-3 sm:px-4 py-6 sm:py-8 pt-20 sm:pt-24">
       <Navbar />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl">
-        <div className="shadow-xl flex flex-col px-6 py-6 md:px-8 col-span-1 w-full gap-4 items-center justify-center bg-linear-to-r from-purple-200 to-pink-200 via-white rounded-2xl text-center">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 w-full max-w-6xl">
+        <div className="shadow-xl flex flex-col px-5 py-6 sm:px-6 md:px-8 col-span-1 w-full gap-4 items-center justify-center bg-linear-to-r from-purple-200 to-pink-200 via-white rounded-2xl text-center">
           <span className="text-6xl">👋</span>
           <div className="flex flex-col gap-2 items-center justify-center">
             <h1 className="text-2xl font-light">Welcome Back, {fullName}</h1>
@@ -170,13 +189,13 @@ export default function ProfilePage() {
           </div>
           <Link
             href="/mock-tests"
-            className="text-white bg-black rounded-xl px-6 py-4 font-light leading-relaxed"
+            className="text-white bg-black rounded-xl px-5 sm:px-6 py-3 sm:py-4 font-light leading-relaxed w-full sm:w-auto"
           >
             Start Practicing
           </Link>
         </div>
 
-        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-xl w-full col-span-1 md:col-span-2 space-y-6">
+        <div className="bg-white p-5 sm:p-6 md:p-8 rounded-2xl shadow-xl w-full col-span-1 md:col-span-2 space-y-6">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-light">My Profile</h2>
             <button
@@ -189,12 +208,12 @@ export default function ProfilePage() {
         
           {/* Avatar */}
           <div className="flex flex-col sm:flex-row items-center sm:items-center gap-4 sm:gap-6">
-            <div className="relative w-28 h-28 sm:w-34 sm:h-34">
+            <div className="relative w-24 h-24 sm:w-28 sm:h-28">
               {avatarUrl ? (
                 <img
                   src={avatarUrl}
                   alt="Profile"
-                  className="w-28 h-28 sm:w-34 sm:h-34 rounded-full object-cover"
+                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover"
                 />
               ) : (
                 <div className="w-28 h-28 rounded-full bg-gray-300 flex items-center justify-center">
@@ -254,7 +273,7 @@ export default function ProfilePage() {
 
           {!isEditing ? (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-2xl">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6 max-w-2xl w-full">
                 <div className="bg-neutral-50 px-4 py-2 rounded-xl border border-neutral-200">
                   <p className="text-xs text-neutral-500">Name</p>
                   <p className="text-lg font-medium text-neutral-800">{fullName || "—"}</p>
@@ -327,6 +346,12 @@ export default function ProfilePage() {
               </div>
             </>
           )}
+        </div>
+        <div className="col-span-1 order-3 md:order-0">
+          <TodoList />
+        </div>
+        <div className="col-span-1 md:col-span-2 order-4 md:order-0">
+          <UserFlashcardCarousel />
         </div>
       </div>
     </main>
