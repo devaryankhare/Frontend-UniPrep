@@ -70,14 +70,15 @@ export default async function StartTestPage({
     .from("questions")
     .select(
       `
+    id,
+    question_text,
+    question_order,
+    question_image,
+    options (
       id,
-      question_text,
-      question_order,
-      options (
-        id,
-        option_text
-      )
-    `
+      option_text
+    )
+  `
     )
     .eq("test_id", testId)
     .order("question_order", { ascending: true });
