@@ -9,6 +9,7 @@ import Usp from "./components/Usp";
 import Reviews from "./components/Review";
 import Faq from "./components/faq";
 import Footer from "./components/Footer";
+import Pricing from "./components/pricing";
 
 export default function Home() {
   const logos = ["/logos/du.png", "/logos/srcc.png", "/logos/jnu.png", "/logos/st.png"];
@@ -30,6 +31,8 @@ export default function Home() {
       </div>
 
       <CuetCoverage />
+
+      <Pricing />
 
       <Courses />
 
