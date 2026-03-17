@@ -29,6 +29,12 @@ export const metadata: Metadata = {
     "study platform",
     "student learning tools",
     "practice tests",
+    "CUET mock tests",
+    "Online test series for CUET",
+    "Free CUET mock test",
+    "Delhi University CUET preparation",
+    "Target DU CUET 2026",
+    "How to crack CUET 2026 with smart practice",
   ],
 
   authors: [{ name: "Uniprep" }],
