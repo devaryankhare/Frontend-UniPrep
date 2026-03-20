@@ -1,0 +1,128 @@
+import { createHmac, timingSafeEqual } from "node:crypto";
+
+const RAZORPAY_API_BASE = "https://api.razorpay.com/v1";
+
+type RazorpayOrder = {
+  id: string;
+  amount: number;
+  currency: string;
+  notes?: {
+    user_id?: string;
+    plan_id?: string;
+    plan_name?: string;
+  };
+};
+
+function getRazorpayCredentials() {
+  const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+  const keySecret = process.env.RAZORPAY_KEY_SECRET;
+
+  if (!keyId || !keySecret) {
+    throw new Error("Razorpay credentials are not configured");
+  }
+
+  return { keyId, keySecret };
+}
+
+function getAuthHeader() {
+  const { keyId, keySecret } = getRazorpayCredentials();
+  const encoded = Buffer.from(`${keyId}:${keySecret}`).toString("base64");
+
+  return `Basic ${encoded}`;
+}
+
+async function parseRazorpayResponse(response: Response) {
+  const payload = (await response.json().catch(() => null)) as
+    | {
+        error?: {
+          description?: string;
+        };
+      }
+    | null;
+
+  if (!response.ok) {
+    throw new Error(payload?.error?.description || "Razorpay request failed");
+  }
+
+  return payload;
+}
+
+export function getRazorpayKeyId() {
+  return getRazorpayCredentials().keyId;
+}
+
+export async function createRazorpayOrder(input: {
+  amountPaise: number;
+  currency: string;
+  receipt: string;
+  userId: string;
+  planId: string;
+  planName: string;
+}) {
+  const response = await fetch(`${RAZORPAY_API_BASE}/orders`, {
+    method: "POST",
+    headers: {
+      Authorization: getAuthHeader(),
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      amount: input.amountPaise,
+      currency: input.currency,
+      receipt: input.receipt,
+      notes: {
+        user_id: input.userId,
+        plan_id: input.planId,
+        plan_name: input.planName,
+      },
+    }),
+    cache: "no-store",
+  });
+
+  const payload = (await parseRazorpayResponse(response)) as RazorpayOrder | null;
+
+  if (!payload?.id) {
+    throw new Error("Razorpay order was not created");
+  }
+
+  return payload;
+}
+
+export async function getRazorpayOrder(orderId: string) {
+  const response = await fetch(`${RAZORPAY_API_BASE}/orders/${orderId}`, {
+    method: "GET",
+    headers: {
+      Authorization: getAuthHeader(),
+      "Content-Type": "application/json",
+    },
+    cache: "no-store",
+  });
+
+  const payload = (await parseRazorpayResponse(response)) as RazorpayOrder | null;
+
+  if (!payload?.id) {
+    throw new Error("Razorpay order was not found");
+  }
+
+  return payload;
+}
+
+export function verifyRazorpaySignature(input: {
+  orderId: string;
+  paymentId: string;
+  signature: string;
+}) {
+  const { keySecret } = getRazorpayCredentials();
+
+  const expectedSignature = createHmac("sha256", keySecret)
+    .update(`${input.orderId}|${input.paymentId}`)
+    .digest("hex");
+
+  const providedBuffer = Buffer.from(input.signature);
+  const expectedBuffer = Buffer.from(expectedSignature);
+
+  if (providedBuffer.length !== expectedBuffer.length) {
+    return false;
+  }
+
+  return timingSafeEqual(providedBuffer, expectedBuffer);
+}
