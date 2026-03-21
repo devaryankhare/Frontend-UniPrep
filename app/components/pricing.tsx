@@ -234,7 +234,7 @@ export default function Pricing() {
   };
 
   return (
-    <main className="max-w-6xl py-12 mx-auto px-4">
+    <main id="pricing" className="max-w-6xl py-12 mx-auto px-4">
       <div className="flex flex-col gap-2 justify-center items-center">
         <span className="text-3xl md:text-4xl font-semibold text-center">
           Choose Your Plan
