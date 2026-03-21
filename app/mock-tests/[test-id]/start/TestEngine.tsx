@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import SubmitModal from "./components/SummaryPanel";
 
 interface Option {
   id: string;
@@ -35,6 +36,7 @@ export default function TestEngine({
   const [timeLeft, setTimeLeft] = useState(durationMinutes * 60);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [questionTime, setQuestionTime] = useState<Record<string, number>>({});
   const [startTime, setStartTime] = useState<number>(() => Date.now());
 
@@ -183,6 +185,28 @@ export default function TestEngine({
     }));
   }
 
+  function clearResponse() {
+    setAnswers((prev) => {
+      const updated = { ...prev };
+      delete updated[currentQuestion.id];
+      return updated;
+    });
+  }
+
+  function handleSaveAndNext() {
+    handleNext();
+  }
+
+  function handleSaveAndMarkForReview() {
+    toggleMarkForReview();
+    handleNext();
+  }
+
+  function handleMarkForReviewAndNext() {
+    toggleMarkForReview();
+    handleNext();
+  }
+
   /* ---------------- UI ---------------- */
 
   return (
@@ -197,7 +221,29 @@ export default function TestEngine({
       )}
 
       {/* Main Section — grows naturally, page scrolls */}
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 relative z-10">
+        {/* Watermark Overlay (only on exam section) */}
+        <div className="absolute inset-0 pointer-events-none z-0 flex items-center justify-center">
+          <div
+            className="text-black opacity-10 text-4xl font-bold select-none"
+            style={{
+              transform: "rotate(-45deg)",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {attemptId}
+          </div>
+          <div
+            className="text-black opacity-10 text-4xl font-bold select-none"
+            style={{
+              transform: "rotate(-45deg)",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {attemptId}
+          </div>
+          
+        </div>
         <div className="bg-white p-12 rounded-xl shadow-sm">
           <h1 className="text-lg font-semibold border-b pb-2 mb-6">
             Question {currentIndex + 1} of {questions.length}
@@ -243,14 +289,66 @@ export default function TestEngine({
             })}
           </div>
 
+          <div className="mt-6 flex flex-wrap gap-3">
+            {currentIndex === questions.length - 1 ? (
+              <button
+                onClick={() => setShowSubmitModal(true)}
+                className="px-6 py-4 bg-emerald-500 text-white rounded"
+              >
+                Save & Submit
+              </button>
+            ) : (
+              <button
+                onClick={handleSaveAndNext}
+                className="px-4 py-4 bg-green-500 text-white rounded"
+              >
+                Save & Next
+              </button>
+            )}
+
+            <button
+              onClick={clearResponse}
+              className="px-8 py-4 bg-white border border-black text-black rounded"
+            >
+              Clear
+            </button>
+
+            <button
+              onClick={handleSaveAndMarkForReview}
+              className="px-4 py-4 bg-amber-500 text-white rounded"
+            >
+              Save & Mark for Review
+            </button>
+
+            <button
+              onClick={handleMarkForReviewAndNext}
+              className="px-4 py-4 bg-blue-500 text-white rounded"
+            >
+              Marked for Review & Next
+            </button>
+          </div>
+
           {submitError && (
             <p className="mt-4 text-red-600 text-sm text-center">{submitError}</p>
           )}
         </div>
       </div>
 
+      <SubmitModal
+        open={showSubmitModal}
+        onClose={() => setShowSubmitModal(false)}
+        onSubmit={handleSubmit}
+        total={questions.length}
+        answered={Object.keys(answers).length}
+        notAnswered={questions.length - Object.keys(answers).length}
+        marked={Object.values(markedReview).filter(Boolean).length}
+        answeredAndMarked={questions.filter(
+          (q) => answers[q.id] && markedReview[q.id]
+        ).length}
+      />
+
       {/* Right Palette — sticks to viewport while page scrolls */}
-      <div className="w-92 sticky top-0 h-screen flex flex-col justify-between bg-white border-l p-6 pb-12 overflow-y-auto">
+      <div className="w-92 sticky top-0 h-screen flex flex-col justify-between bg-white border-l p-6 pb-12 overflow-y-auto relative z-10">
         <div>
           <div className="flex justify-between items-center mb-6">
             <div className="text-black flex items-center gap-2 font-bold text-lg">
@@ -293,46 +391,6 @@ export default function TestEngine({
               );
             })}
           </div>
-
-            <div className="py-8">
-              <button
-            onClick={toggleMarkForReview}
-            className={`px-6 py-4 rounded-xl font-medium ${
-              markedReview[currentQuestion.id]
-                ? "bg-green-500 text-white"
-                : "bg-purple-500 text-white"
-            }`}
-          >
-            {markedReview[currentQuestion.id] ? "Marked for Review" : "Mark for Review"}
-          </button>
-            </div>
-        </div>
-
-        <div className="flex justify-between items-center mt-8 gap-3 flex-wrap">
-          <button
-            onClick={handlePrevious}
-            disabled={currentIndex === 0}
-            className="px-6 py-2 bg-linear-to-br from-neutral-300 via-neutral-100 to-neutral-300 shadow-lg text-black border rounded-xl disabled:opacity-50"
-          >
-            {"<<"} Previous
-          </button>
-
-          {currentIndex === questions.length - 1 ? (
-            <button
-              onClick={handleSubmit}
-              disabled={submitting}
-              className="px-6 py-2 bg-emerald-300 text-black border hover:scale-110 duration-300 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              {submitting ? "Submitting…" : "Submit Test"}
-            </button>
-          ) : (
-            <button
-              onClick={handleNext}
-              className="px-6 py-2 bg-linear-to-br from-neutral-300 via-neutral-100 to-neutral-300 shadow-lg text-black border rounded-xl"
-            >
-              Next {">>"}
-            </button>
-          )}
         </div>
       </div>
     </div>
