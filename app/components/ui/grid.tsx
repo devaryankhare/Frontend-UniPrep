@@ -40,9 +40,6 @@ export default function Grid() {
             <p className="text-center text-sm md:text-base text-black mb-6">
               Continue learning from your enrolled classes.
             </p>
-            <button className="bg-black text-white px-6 py-3 rounded-full text-sm md:text-base font-semibold hover:bg-gray-800 transition-colors">
-              Continue Learning
-            </button>
           </div>
         </div>
 
@@ -111,8 +108,14 @@ export default function Grid() {
             <p className="text-center text-sm md:text-base text-black mb-5">
               Browse our CUET crash courses and live programs.
             </p>
-            <button className="bg-black text-white px-5 py-2.5 rounded-full text-sm md:text-base font-semibold hover:bg-gray-800 transition-colors">
-              See Courses
+            <button
+              onClick={() => {
+                const el = document.getElementById("pricing");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="bg-black text-white px-5 py-2.5 rounded-full text-sm md:text-base font-semibold hover:bg-gray-800 transition-colors"
+            >
+              View Pricing
             </button>
           </div>
 
@@ -125,9 +128,6 @@ export default function Grid() {
             <p className="text-center text-sm md:text-base text-black mb-6">
               Track accuracy, identify weak areas, and improve smarter.
             </p>
-            <button className="bg-black text-white px-6 py-3 rounded-full text-sm md:text-base font-semibold hover:bg-gray-800 transition-colors">
-              View Analysis
-            </button>
           </div>
         </div>
 
