@@ -13,15 +13,26 @@ type Note = {
   stream: string
 }
 
+const supabase = createClient()
+
 export default function Notes() {
   const [notes, setNotes] = useState<Note[]>([])
   const [loading, setLoading] = useState(true)
 
-  const supabase = createClient()
   const router = useRouter()
 
   useEffect(() => {
     const fetchNotes = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+
+      if (!session) {
+        console.error("No active session")
+        setLoading(false)
+        return
+      }
+
       const { data, error } = await supabase.from("notes").select("*")
 
       if (error) {
@@ -49,20 +60,47 @@ export default function Notes() {
             <ComingSoon />
         </p>
       ) : (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {notes.map((note) => (
             <div
               key={note.id}
-              className="p-4 border col-span-1 border-neutral-200 rounded-lg bg-neutral-100"
+              className="p-4 border col-span-1 border-neutral-200 rounded-lg bg-white shadow-md duration-300 hover:scale-105 transition"
             >
-              <h2 className="text-lg font-semibold text-black">{note.title}</h2>
-              <p className="text-sm text-neutral-400">
-                {note.bucket} • {note.subject} • {note.stream}
-              </p>
+              <div className="relative w-full h-50 mb-3 rounded-md overflow-hidden">
+                <img
+                  src="/assets/notes.png"
+                  alt="preview"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 flex items-center justify-center p-2">
+                  <span className="text-xl text-black font-medium line-clamp-2 text-center">
+                    {note.title}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 py-4">
+                <span className="text-black">
+                {note.stream}
+              </span>
+              <span>
+                <div className="bg-black animate-pulse h-2 w-2 rounded-full"></div>
+              </span>
+              <span className="text-black">
+                {note.subject}
+              </span>
+              </div>
 
               <button
-                onClick={() => router.push(`/viewer?file=${encodeURIComponent(note.pdf_url)}`)}
-                className="inline-block mt-3 text-blue-400 hover:underline"
+                onClick={() => {
+                  // extract file path from signed URL
+                  const path = note.pdf_url
+                    .split("/object/sign/notes/")[1]
+                    ?.split("?")[0]
+
+                  router.push(`/viewer?file=${encodeURIComponent(path || "")}`)
+                }}
+                className="inline-block py-2 px-6 rounded-full text-sm bg-blue-500 font-medium hover:scale-110 duration-300"
               >
                 View PDF
               </button>

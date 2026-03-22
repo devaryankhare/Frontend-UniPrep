@@ -45,12 +45,13 @@ export default function FlashCards() {
   const PAGE_SIZE = 5;
   const [hasNextPage, setHasNextPage] = useState(true);
   const [hasPrevPage, setHasPrevPage] = useState(false);
+  const [nextPageCache, setNextPageCache] = useState<Flashcard[] | null>(null);
 
   // Fetch flashcards for "search" tab in batches of 5
   useEffect(() => {
     if (activeTab !== "search") return;
     async function fetchFlashcardPage() {
-      setLoading(true);
+      if (flashcards.length === 0) setLoading(true);
       const start = page * PAGE_SIZE;
       const end = start + PAGE_SIZE - 1;
       const { data, error } = await supabase
@@ -62,15 +63,32 @@ export default function FlashCards() {
         setLoading(false);
         return;
       }
-      setFlashcards(data || []);
-      setCurrentIndex(0);
-      setRandomFlashcard(data && data.length > 0 ? data[0] : null);
+      if (data && data.length > 0) {
+        setFlashcards(data);
+      }
+      const initialIndex = 0;
+      setCurrentIndex(initialIndex);
+      if (data && data.length > 0) {
+        setRandomFlashcard(data[0]);
+      }
       setHasPrevPage(page > 0);
       setHasNextPage(data && data.length === PAGE_SIZE);
+      // Prefetch next page for seamless pagination
+      if (data && data.length === PAGE_SIZE) {
+        const nextStart = (page + 1) * PAGE_SIZE;
+        const nextEnd = nextStart + PAGE_SIZE - 1;
+        const { data: nextData } = await supabase
+          .from("flash_cards")
+          .select("word, meaning, type, synonyms, antonyms, hook, example")
+          .range(nextStart, nextEnd);
+        setNextPageCache(nextData || []);
+      } else {
+        setNextPageCache(null);
+      }
       setLoading(false);
     }
     fetchFlashcardPage();
-  }, [page, activeTab]);
+  }, [page, activeTab === "search"]);
 
   // Fetch all user-specific flashcards for "yourFlashcards" tab (no pagination)
   useEffect(() => {
@@ -113,12 +131,12 @@ export default function FlashCards() {
       .filter((a) => a.length > 0);
 
     // Get current user to attach user_id
-    const { data: userData, error: userError } = await supabase.auth.getUser();
-    if (userError || !userData?.user?.id) {
-      console.error("Error getting current user:", userError?.message || userError || "No user found");
+    const { data: { session } } = await supabase.auth.getSession();
+    const user_id = session?.user?.id;
+    if (!user_id) {
+      console.error("No user found");
       return;
     }
-    const user_id = userData.user.id as string;
 
     const flashcardToAdd: Flashcard = {
       word: newWord,
@@ -163,11 +181,13 @@ export default function FlashCards() {
     setNewAntonyms("");
   }
 
-  const filteredFlashcards = flashcards.filter(
-    (flashcard) =>
-      flashcard.word.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      flashcard.meaning.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const filteredFlashcards = flashcards.length
+    ? flashcards.filter(
+        (flashcard) =>
+          flashcard.word.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          flashcard.meaning.toLowerCase().includes(searchTerm.toLowerCase()),
+      )
+    : [];
 
   function toggleFlip(index: number) {
     setFlippedCards((prev) => {
@@ -202,8 +222,9 @@ export default function FlashCards() {
 
   function handlePrev() {
     if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-      setRandomFlashcard(flashcards[currentIndex - 1]);
+      const prevIndex = currentIndex - 1;
+      setCurrentIndex(prevIndex);
+      setRandomFlashcard(flashcards[prevIndex]);
       setFlippedCards((prev) => {
         const newSet = new Set(prev);
         newSet.delete(-1);
@@ -217,16 +238,25 @@ export default function FlashCards() {
 
   function handleNext() {
     if (currentIndex < flashcards.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-      setRandomFlashcard(flashcards[currentIndex + 1]);
+      const nextIndex = currentIndex + 1;
+      setCurrentIndex(nextIndex);
+      setRandomFlashcard(flashcards[nextIndex]);
       setFlippedCards((prev) => {
         const newSet = new Set(prev);
         newSet.delete(-1);
         return newSet;
       });
     } else if (hasNextPage) {
-      setPage(page + 1);
-      // currentIndex and randomFlashcard will be set by useEffect
+      if (nextPageCache && nextPageCache.length > 0) {
+        setFlashcards(nextPageCache);
+        const nextIndex = 0;
+        setCurrentIndex(nextIndex);
+        setRandomFlashcard(nextPageCache[nextIndex]);
+        setPage(page + 1);
+      } else {
+        setPage(page + 1);
+      }
+      // currentIndex and randomFlashcard will be set by useEffect or above
     }
   }
 

@@ -10,9 +10,9 @@ export default function Grid() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full">
         
         {/* Left Column */}
-        <div className="flex flex-col gap-4 md:gap-6 w-full h-full lg:h-[624px] order-1">
+        <div className="flex flex-col gap-4 md:gap-6 w-full h-full lg:h-156 order-1">
           {/* Blue Card - Student Reviews */}
-          <div className="flex-1 flex flex-col items-center justify-center bg-linear-to-br from-blue-200 to-blue-300 shadow-lg rounded-2xl p-6 min-h-[220px]">
+          <div className="flex-1 flex flex-col items-center justify-center bg-linear-to-br from-blue-200 to-blue-300 shadow-lg rounded-2xl p-6 min-h-55">
             <FaUsers className="text-4xl text-black mb-3" />
             <h3 className="text-xl md:text-2xl font-bold text-black mb-2 text-center">
               Student Reviews
@@ -32,7 +32,7 @@ export default function Grid() {
           </div>
 
           {/* Orange Card - Active Courses */}
-          <div className="flex-1 flex flex-col items-center justify-center bg-linear-to-br from-orange-200 to-orange-300 shadow-lg rounded-2xl p-6 min-h-[220px]">
+          <div className="flex-1 flex flex-col items-center justify-center bg-linear-to-br from-orange-200 to-orange-300 shadow-lg rounded-2xl p-6 min-h-55">
             <FaCirclePlay className="text-4xl text-black mb-3" />
             <h3 className="text-xl md:text-2xl font-bold text-black mb-3 text-center">
               Your Active Courses
@@ -40,16 +40,13 @@ export default function Grid() {
             <p className="text-center text-sm md:text-base text-black mb-6">
               Continue learning from your enrolled classes.
             </p>
-            <button className="bg-black text-white px-6 py-3 rounded-full text-sm md:text-base font-semibold hover:bg-gray-800 transition-colors">
-              Continue Learning
-            </button>
           </div>
         </div>
 
         {/* Center Column */}
-        <div className="flex flex-col gap-4 md:gap-6 w-full h-full lg:h-[624px] order-2 lg:order-2">
+        <div className="flex flex-col gap-4 md:gap-6 w-full h-full lg:h-156 order-2 lg:order-2">
           {/* Image Slideshow (taller) */}
-          <div className="relative shadow-lg w-full overflow-hidden rounded-2xl h-[300px] lg:h-[400px]">
+          <div className="relative shadow-lg w-full overflow-hidden rounded-2xl h-75 lg:h-100">
             {[
               "/colleges/college1.webp",
               "/colleges/college2.jpeg",
@@ -83,7 +80,7 @@ export default function Grid() {
           </div>
 
           {/* Yellow Card - Study Materials (shorter) */}
-          <div className="flex-1 flex flex-col items-center justify-center bg-linear-to-br from-yellow-200 to-yellow-300 shadow-lg rounded-2xl p-6 min-h-[180px]">
+          <div className="flex-1 flex flex-col items-center justify-center bg-linear-to-br from-yellow-200 to-yellow-300 shadow-lg rounded-2xl p-6 min-h-45">
             <FaBookOpen className="text-4xl text-black mb-3" />
             <h3 className="text-xl md:text-2xl font-bold text-black mb-2 text-center">
               Study Materials
@@ -101,9 +98,9 @@ export default function Grid() {
         </div>
 
         {/* Right Column */}
-        <div className="flex flex-col gap-4 md:gap-6 w-full h-full lg:h-[624px] order-3">
+        <div className="flex flex-col gap-4 md:gap-6 w-full h-full lg:h-156 order-3">
           {/* Purple Card - Explore Courses */}
-          <div className="flex-1 flex flex-col items-center justify-center bg-linear-to-br from-purple-200 to-purple-300 shadow-lg rounded-2xl p-6 min-h-[220px]">
+          <div className="flex-1 flex flex-col items-center justify-center bg-linear-to-br from-purple-200 to-purple-300 shadow-lg rounded-2xl p-6 min-h-55">
             <FaGraduationCap className="text-4xl text-black mb-3" />
             <h3 className="text-xl md:text-2xl font-bold text-black mb-2 text-center">
               Explore Courses
@@ -111,13 +108,19 @@ export default function Grid() {
             <p className="text-center text-sm md:text-base text-black mb-5">
               Browse our CUET crash courses and live programs.
             </p>
-            <button className="bg-black text-white px-5 py-2.5 rounded-full text-sm md:text-base font-semibold hover:bg-gray-800 transition-colors">
-              See Courses
+            <button
+              onClick={() => {
+                const el = document.getElementById("pricing");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="bg-black text-white px-5 py-2.5 rounded-full text-sm md:text-base font-semibold hover:bg-gray-800 transition-colors"
+            >
+              View Pricing
             </button>
           </div>
 
           {/* Green Card - Performance Analysis */}
-          <div className="flex-1 flex flex-col items-center justify-center bg-linear-to-br from-green-200 to-green-300 shadow-lg rounded-2xl p-6 min-h-[220px]">
+          <div className="flex-1 flex flex-col items-center justify-center bg-linear-to-br from-green-200 to-green-300 shadow-lg rounded-2xl p-6 min-h-55">
             <FaChartLine className="text-4xl text-black mb-3" />
             <h3 className="text-xl md:text-2xl font-bold text-black mb-3 text-center">
               Performance Analysis
@@ -125,9 +128,6 @@ export default function Grid() {
             <p className="text-center text-sm md:text-base text-black mb-6">
               Track accuracy, identify weak areas, and improve smarter.
             </p>
-            <button className="bg-black text-white px-6 py-3 rounded-full text-sm md:text-base font-semibold hover:bg-gray-800 transition-colors">
-              View Analysis
-            </button>
           </div>
         </div>
 
