@@ -8,9 +8,18 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { IoMdPerson } from "react-icons/io";
 import { useAuth } from "@/providers/AuthProvider";
+import { useMemo } from "react";
+
+const navlinks = [
+    { title: "Home", link: "/" },
+    { title: "Mocks", link: "/mock-tests" },
+    { title: "Materials", link: "/materials" },
+    { title : "Lectures", link : "/lectures"},
+    { title: "Notice", link: "/notice" },
+  ];
 
 export default function Navbar() {
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
   const { user, profile, isAuthLoading } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -52,30 +61,20 @@ export default function Navbar() {
   }, [isProfileOpen]);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setIsProfileOpen(false);
-  };
+  await supabase.auth.signOut();
+  setIsProfileOpen(false);
+  router.push("/auth");
+};
 
   const avatarUrl = profile?.avatar_url ?? null;
 
-  const navlinks = [
-    { title: "Home", link: "/" },
-    { title: "Mocks", link: "/mock-tests" },
-    { title: "Materials", link: "/materials" },
-    { title : "Lectures", link : "/lectures"},
-    { title: "Notice", link: "/notice" },
-  ];
+const displayName = useMemo(() =>
+  user?.user_metadata?.display_name || user?.email?.split("@")[0] || "User"
+, [user]);
 
-  const getInitials = () => {
-    if (user?.user_metadata?.display_name) {
-      return user.user_metadata.display_name.charAt(0).toUpperCase();
-    }
-    return user?.email?.charAt(0).toUpperCase() || "U";
-  };
-
-  const getDisplayName = () => {
-    return user?.user_metadata?.display_name || user?.email?.split("@")[0] || "User";
-  };
+const initials = useMemo(() =>
+  (user?.user_metadata?.display_name ?? user?.email ?? "U").charAt(0).toUpperCase()
+, [user]);
 
   return (
     <>
@@ -132,11 +131,11 @@ export default function Navbar() {
                         className="h-full w-full object-cover"
                       />
                     ) : (
-                      getInitials()
+                      <span>{initials}</span>
                     )}
                   </div>
                   <span className="hidden sm:block text-sm font-medium text-slate-700 max-w-[100px] truncate">
-                    {getDisplayName()}
+                    {displayName}
                   </span>
                   <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${isProfileOpen ? "rotate-180" : ""}`} />
                 </motion.button>
@@ -152,7 +151,7 @@ export default function Navbar() {
                       className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-xl shadow-black/10 border border-slate-100 overflow-hidden"
                     >
                       <div className="p-3 border-b border-slate-100">
-                        <p className="text-sm font-semibold text-slate-900 truncate">{getDisplayName()}</p>
+                        <p className="text-sm font-semibold text-slate-900 truncate">{displayName}</p>
                         <p className="text-xs text-slate-500 truncate" onClick={()=>router.push("/profile")}>{user.email}</p>
                       </div>
                       <div className="p-1 flex flex-col justify-center items-center">
