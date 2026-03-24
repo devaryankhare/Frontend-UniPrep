@@ -499,7 +499,7 @@ export default function Pricing() {
       </div>
 
       {isSelectionOpen && selectedPlan ? (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 px-4 py-6">
+        <div className="fixed inset-0 z-70 flex items-center justify-center bg-black/40 px-4 py-6">
           <div
             className="absolute inset-0"
             onClick={closeSelectionBox}
@@ -533,7 +533,7 @@ export default function Pricing() {
                     key={stream.key}
                     type="button"
                     onClick={() => setSelectedStream(stream.key)}
-                    className={`min-w-[180px] flex-1 rounded-2xl border px-4 py-4 text-left transition-all ${
+                    className={`min-w-45 flex-1 rounded-2xl border px-4 py-4 text-left transition-all ${
                       isSelected
                         ? "border-emerald-500 bg-emerald-50 shadow-sm"
                         : "border-neutral-200 bg-neutral-50 hover:border-neutral-300 hover:bg-neutral-100"
