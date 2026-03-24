@@ -141,14 +141,14 @@ const initials = useMemo(() =>
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 8, scale: 0.95 }}
                       transition={{ duration: 0.2 }}
-                      className="absolute right-0 top-full mt-3 w-64 origin-top-right rounded-[26px] border border-slate-200 bg-white p-2 shadow-[0_18px_50px_-24px_rgba(15,23,42,0.35)]"
+                      className="absolute right-0 top-full mt-3 w-64 origin-top-right rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_18px_50px_-24px_rgba(15,23,42,0.35)]"
                     >
-                      <div className="rounded-[20px] border border-slate-200/80 bg-linear-to-br from-slate-50 via-white to-blue-50 px-3.5 py-3.5 shadow-sm">
+                      <div className="rounded-t-2xl rounded-b-lg border border-slate-200/80 bg-linear-to-br from-slate-50 via-white to-blue-50 px-3.5 py-3.5 shadow-sm">
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold text-slate-900">
+                          <p className="truncate text-sm font-semibold text-black">
                             {displayName}
                           </p>
-                          <div className="mt-2 flex items-center gap-2 text-[11px] text-slate-600">
+                          <div className="mt-2 flex items-center gap-2 text-[11px] text-neutral-600">
                             <Mail className="h-3.5 w-3.5 shrink-0 text-slate-400" />
                             <span className="min-w-0 break-all">{user.email}</span>
                           </div>
@@ -179,7 +179,7 @@ const initials = useMemo(() =>
                           onClick={handleLogout}
                           className="flex w-full items-center gap-2.5 rounded-2xl border border-rose-100 px-3 py-2.5 text-sm font-medium text-rose-600 transition-colors duration-200 hover:bg-rose-50"
                         >
-                          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-50 text-rose-500">
+                          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-50 text-red-500">
                             <LogOut className="h-4 w-4" />
                           </span>
                           Sign out
