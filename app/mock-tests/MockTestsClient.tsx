@@ -3,26 +3,55 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import { ChevronLeft, ChevronRight, Loader2, RotateCcw } from "lucide-react";
-import type { MockFilterTree, MockTestsPageResponse } from "@/lib/mock-tests";
+import type {
+  ContentCategory,
+  MainStreamLabel,
+  SubscriptionAccess,
+} from "@/lib/subscriptions";
+
+type MockTest = {
+  id: string;
+  title: string;
+  duration_minutes: number;
+  total_marks: number;
+  subject: string;
+  stream: string;
+  year: number;
+};
+
+type MockTestsPageResponse = {
+  tests: MockTest[];
+  totalPages: number;
+  currentPage: number;
+  totalCount: number;
+};
 
 type MockTestsClientProps = {
-  filterTree: MockFilterTree;
+  access: SubscriptionAccess | null;
+  subjectOptionsByStream: Record<MainStreamLabel, string[]>;
   initialParams: {
-    domain?: string;
+    category?: string;
     subject?: string;
     page?: string;
+    stream?: string;
   };
 };
 
 type FilterState = {
-  domain: string;
+  stream: MainStreamLabel;
+  category: ContentCategory;
   subject: string;
   page: number;
 };
 
-type HistoryMode = "push" | "replace";
+const CATEGORY_LABELS: Record<ContentCategory, string> = {
+  all: "All",
+  main: "Main Stream",
+  english: "English",
+  gat: "GAT",
+};
 
 function toDisplayLabel(value: string) {
   return value
@@ -42,54 +71,59 @@ function parsePage(value?: string) {
   return Number.isInteger(page) && page > 0 ? page : 1;
 }
 
-function sanitizeFilterState(state: FilterState, filterTree: MockFilterTree): FilterState {
-  const domain = state.domain && filterTree[state.domain] ? state.domain : "";
-  const subject =
-    domain && state.subject && filterTree[domain]?.includes(state.subject)
-      ? state.subject
-      : "";
+function normalizeInitialCategory(
+  value: string | undefined,
+  access: SubscriptionAccess | null,
+): ContentCategory {
+  if (
+    value === "all" ||
+    value === "main" ||
+    value === "english" ||
+    value === "gat"
+  ) {
+    if (!access || access.allowedCategories.includes(value)) {
+      return value;
+    }
+  }
 
-  return {
-    domain,
-    subject,
-    page: subject ? parsePage(String(state.page)) : 1,
-  };
+  return "all";
 }
 
-function stateFromParams(params: MockTestsClientProps["initialParams"]): FilterState {
-  return {
-    domain: params.domain?.trim() ?? "",
-    subject: params.subject?.trim() ?? "",
-    page: parsePage(params.page),
-  };
-}
+function normalizeStreamLabel(
+  value: string | undefined,
+  access: SubscriptionAccess | null,
+): MainStreamLabel {
+  const normalized = value?.trim().toLowerCase();
 
-function stateFromLocation(): FilterState {
-  const searchParams = new URLSearchParams(window.location.search);
+  const label =
+    normalized === "science"
+      ? "Science"
+      : normalized === "commerce"
+        ? "Commerce"
+        : normalized === "arts" || normalized === "art" || normalized === "humanities"
+          ? "Arts"
+          : null;
 
-  return {
-    domain: searchParams.get("domain")?.trim() ?? "",
-    subject: searchParams.get("subject")?.trim() ?? "",
-    page: parsePage(searchParams.get("page") ?? "1"),
-  };
-}
+  if (label && access?.selectableMainStreams.includes(label)) {
+    return label;
+  }
 
-function serializeState(state: FilterState) {
-  return `${state.domain}|${state.subject}|${state.page}`;
+  return access?.baseStreamLabel ?? "Science";
 }
 
 function buildUrl(pathname: string, state: FilterState) {
   const params = new URLSearchParams();
+  params.set("stream", state.stream.toLowerCase());
 
-  if (state.domain) {
-    params.set("domain", state.domain);
+  if (state.category !== "all") {
+    params.set("category", state.category);
   }
 
   if (state.subject) {
     params.set("subject", state.subject);
   }
 
-  if (state.subject && state.page > 1) {
+  if (state.page > 1) {
     params.set("page", String(state.page));
   }
 
@@ -97,28 +131,43 @@ function buildUrl(pathname: string, state: FilterState) {
   return query ? `${pathname}?${query}` : pathname;
 }
 
+function normalizeSubjectForCategory(
+  category: ContentCategory,
+  stream: MainStreamLabel,
+  subject: string,
+  subjectOptionsByStream: Record<MainStreamLabel, string[]>,
+) {
+  if (category !== "main") {
+    return "";
+  }
+
+  return subjectOptionsByStream[stream]?.includes(subject) ? subject : "";
+}
+
 async function fetchMockTests([
   ,
-  domain,
+  stream,
+  category,
   subject,
   page,
-]: readonly [string, string, string, number]) {
-  const params = new URLSearchParams({
-    domain,
-    subject,
-    page: String(page),
-  });
+]: readonly [string, MainStreamLabel, ContentCategory, string, number]) {
+  const params = new URLSearchParams();
+  params.set("stream", stream.toLowerCase());
+  params.set("category", category);
 
-  const response = await fetch(`/api/mock-tests?${params.toString()}`, {
-    cache: "no-store",
-  });
+  if (subject) {
+    params.set("subject", subject);
+  }
+
+  params.set("page", String(page));
+  const response = await fetch(`/api/mock-tests?${params.toString()}`);
 
   if (!response.ok) {
-    const payload = (await response.json().catch(() => null)) as
-      | { error?: string }
-      | null;
+    if (response.status === 401) {
+      throw new Error("Please sign in to view mock tests.");
+    }
 
-    throw new Error(payload?.error || "Unable to load mock tests");
+    throw new Error("We could not load mock tests right now.");
   }
 
   return (await response.json()) as MockTestsPageResponse;
@@ -150,13 +199,26 @@ function FilterTab({
 }
 
 export default function MockTestsClient({
-  filterTree,
+  access,
+  subjectOptionsByStream,
   initialParams,
 }: MockTestsClientProps) {
+  const { mutate } = useSWRConfig();
   const pathname = "/mock-tests";
-  const [filters, setFilters] = useState(() =>
-    sanitizeFilterState(stateFromParams(initialParams), filterTree),
-  );
+  const hasAccess = Boolean(access);
+  const initialStream = normalizeStreamLabel(initialParams.stream, access);
+  const initialCategory = normalizeInitialCategory(initialParams.category, access);
+  const [filters, setFilters] = useState<FilterState>({
+    stream: initialStream,
+    category: initialCategory,
+    subject: normalizeSubjectForCategory(
+      initialCategory,
+      initialStream,
+      initialParams.subject?.trim() ?? "",
+      subjectOptionsByStream,
+    ),
+    page: parsePage(initialParams.page),
+  });
 
   useEffect(() => {
     const nextUrl = buildUrl(pathname, filters);
@@ -169,70 +231,150 @@ export default function MockTestsClient({
 
   useEffect(() => {
     const handlePopState = () => {
-      const nextState = sanitizeFilterState(stateFromLocation(), filterTree);
-      setFilters((current) =>
-        serializeState(current) === serializeState(nextState) ? current : nextState,
+      const searchParams = new URLSearchParams(window.location.search);
+      const stream = normalizeStreamLabel(
+        searchParams.get("stream") ?? undefined,
+        access,
       );
+      const category = normalizeInitialCategory(
+        searchParams.get("category") ?? undefined,
+        access,
+      );
+
+      setFilters({
+        stream,
+        category,
+        subject: normalizeSubjectForCategory(
+          category,
+          stream,
+          searchParams.get("subject")?.trim() ?? "",
+          subjectOptionsByStream,
+        ),
+        page: parsePage(searchParams.get("page") ?? "1"),
+      });
     };
 
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
-  }, [filterTree]);
+  }, [access, subjectOptionsByStream]);
 
-  const applyState = (nextState: FilterState, mode: HistoryMode = "push") => {
-    const sanitized = sanitizeFilterState(nextState, filterTree);
-    setFilters(sanitized);
-    window.history[mode === "replace" ? "replaceState" : "pushState"](
-      null,
-      "",
-      buildUrl(pathname, sanitized),
-    );
+  useEffect(() => {
+    if (!access) {
+      return;
+    }
+
+    access.allowedCategories.forEach((category) => {
+      const key = ["mock-tests", filters.stream, category, "", 1] as const;
+      void mutate(key, fetchMockTests(key), {
+        populateCache: true,
+        revalidate: false,
+      });
+    });
+  }, [access, filters.stream, mutate]);
+
+  const applyState = (nextState: FilterState) => {
+    setFilters(nextState);
+    window.history.pushState(null, "", buildUrl(pathname, nextState));
   };
 
-  const domains = Object.keys(filterTree);
-  const subjects = filters.domain ? filterTree[filters.domain] ?? [] : [];
-  const isReadyToFetch = Boolean(filters.domain && filters.subject);
-  const swrKey = isReadyToFetch
-    ? (["mock-tests", filters.domain, filters.subject, filters.page] as const)
+  const availableSubjects = subjectOptionsByStream[filters.stream] ?? [];
+  const showSubjectFilters = filters.category === "main";
+  const categoryOptions = access?.allowedCategories ?? [];
+  const swrKey = hasAccess
+    ? ([
+        "mock-tests",
+        filters.stream,
+        filters.category,
+        filters.subject,
+        filters.page,
+      ] as const)
     : null;
 
-  const { data, error, isLoading, isValidating } = useSWR(swrKey, fetchMockTests, {
-    keepPreviousData: true,
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-    revalidateIfStale: false,
-  });
+  const { data, error, isLoading, isValidating } = useSWR(
+    swrKey,
+    fetchMockTests,
+    {
+      keepPreviousData: true,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      revalidateIfStale: false,
+    },
+  );
 
-  const isInitialLoading = isReadyToFetch && !data && (isLoading || isValidating);
+  const isInitialLoading = hasAccess && !data && (isLoading || isValidating);
   const isRefreshing = Boolean(data) && isValidating;
+
+  const resetFilters = () => {
+    applyState({ ...filters, category: "all", subject: "", page: 1 });
+  };
+
+  if (!hasAccess || !access) {
+    return (
+      <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center text-slate-600">
+        <p className="mb-2 text-lg font-medium">Please sign in to view mock tests</p>
+      </div>
+    );
+  }
 
   return (
     <>
       <section className="mb-8 rounded-3xl border border-neutral-100 bg-white p-4 shadow-sm sm:p-6">
         <div className="flex flex-col gap-4">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {domains.map((domain) => (
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-sm font-medium text-neutral-500">
+              Stream:
+            </span>
+            {access.isSubscriber ? (
+              <span className="rounded-full bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white">
+                {access.baseStreamLabel}
+              </span>
+            ) : (
+              access.selectableMainStreams.map((stream) => (
                 <FilterTab
-                  key={domain}
-                  active={filters.domain === domain}
+                  key={stream}
+                  active={filters.stream === stream}
                   onClick={() =>
                     applyState({
-                      domain,
+                      stream,
+                      category: "all",
                       subject: "",
                       page: 1,
                     })
                   }
                 >
-                  {toDisplayLabel(domain)}
+                  {stream}
+                </FilterTab>
+              ))
+            )}
+          </div>
+
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <span className="mr-2 self-center text-sm font-medium text-neutral-500">
+                Category:
+              </span>
+              {categoryOptions.map((category) => (
+                <FilterTab
+                  key={category}
+                  active={filters.category === category}
+                  onClick={() =>
+                    applyState({
+                      ...filters,
+                      category,
+                      subject: "",
+                      page: 1,
+                    })
+                  }
+                >
+                  {CATEGORY_LABELS[category]}
                 </FilterTab>
               ))}
             </div>
 
             <button
               type="button"
-              onClick={() => applyState({ domain: "", subject: "", page: 1 })}
-              disabled={!filters.domain && !filters.subject}
+              onClick={resetFilters}
+              disabled={filters.category === "all"}
               className="inline-flex shrink-0 items-center gap-2 rounded-full border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <RotateCcw className="h-4 w-4" />
@@ -240,23 +382,32 @@ export default function MockTestsClient({
             </button>
           </div>
 
-          {filters.domain ? (
-            <div className="flex flex-wrap gap-3">
-              {subjects.map((subject) => (
-                <FilterTab
-                  key={subject}
-                  active={filters.subject === subject}
-                  onClick={() =>
-                    applyState({
-                      domain: filters.domain,
-                      subject,
-                      page: 1,
-                    })
-                  }
-                >
-                  {toDisplayLabel(subject)}
-                </FilterTab>
-              ))}
+          {showSubjectFilters ? (
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="mr-2 text-sm font-medium text-neutral-500">
+                Subject:
+              </span>
+              {availableSubjects.length > 0 ? (
+                availableSubjects.map((subject) => (
+                  <FilterTab
+                    key={subject}
+                    active={filters.subject === subject}
+                    onClick={() =>
+                      applyState({
+                        ...filters,
+                        subject,
+                        page: 1,
+                      })
+                    }
+                  >
+                    {toDisplayLabel(subject)}
+                  </FilterTab>
+                ))
+              ) : (
+                <span className="text-sm text-neutral-400">
+                  No subjects available for this stream
+                </span>
+              )}
             </div>
           ) : null}
         </div>
@@ -266,7 +417,7 @@ export default function MockTestsClient({
         <div className="space-y-6">
           <div className="flex items-center gap-3 text-sm text-slate-600">
             <Loader2 className="h-4 w-4 animate-spin" />
-            Loading mock tests for {toDisplayLabel(filters.subject)}...
+            Loading mock tests...
           </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, index) => (
@@ -304,33 +455,63 @@ export default function MockTestsClient({
               {data.tests.map((test) => (
                 <div
                   key={test.id}
-                  className="relative rounded-2xl p-4 shadow-sm hover:shadow-md transition overflow-hidden"
+                  className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm transition hover:shadow-md"
                 >
                   <Image
                     src="/assets/nta.jpeg"
                     alt="NTA"
                     width={64}
                     height={64}
-                    className="absolute top-3 right-3 h-16 w-16 opacity-50 pointer-events-none select-none"
+                    className="pointer-events-none absolute top-3 right-3 h-16 w-16 select-none opacity-50"
                   />
-                  <h2 className="text-xl font-semibold">{test.title}</h2>
-                  <div className="flex justify-between my-8">
-                    <p className="text-sm text-black">{test.duration_minutes} mins</p>
-                    <p className="text-sm text-black">Total Marks: {test.total_marks}</p>
+
+                  <div className="mb-2 flex gap-2">
+                    {test.stream && (
+                      <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">
+                        {toDisplayLabel(test.stream)}
+                      </span>
+                    )}
+                    {test.subject && (
+                      <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
+                        {toDisplayLabel(test.subject)}
+                      </span>
+                    )}
                   </div>
 
-                  <Link
-                    href={`/mock-tests/${test.id}`}
-                    className="inline-block px-4 py-2 bg-emerald-300 border border-black text-black rounded-xl"
-                  >
-                    Start Test
-                  </Link>
+                  <h2 className="text-xl font-semibold text-neutral-900">
+                    {test.title}
+                  </h2>
+
+                  <div className="my-4 flex justify-between text-sm text-neutral-600">
+                    <span>{test.duration_minutes} mins</span>
+                    <span>Total Marks: {test.total_marks}</span>
+                  </div>
+
+                  <div className="mb-4 text-xs text-neutral-500">
+                    Year: {test.year}
+                  </div>
+
+                  {access.isSubscriber ? (
+                    <Link
+                      href={`/mock-tests/${test.id}`}
+                      className="inline-block rounded-xl border border-black bg-emerald-300 px-4 py-2 text-black transition hover:bg-emerald-400"
+                    >
+                      Start Test
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/#pricing"
+                      className="inline-block rounded-xl border border-black bg-sky-200 px-4 py-2 text-black transition hover:bg-sky-300"
+                    >
+                      Unlock With Plan
+                    </Link>
+                  )}
                 </div>
               ))}
             </div>
           ) : (
             <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center text-slate-600">
-              No mock tests are available for this subject yet.
+              No mock tests found for the selected filters.
             </div>
           )}
 
@@ -340,7 +521,10 @@ export default function MockTestsClient({
                 <button
                   type="button"
                   onClick={() =>
-                    applyState({ ...filters, page: Math.max(filters.page - 1, 1) })
+                    applyState({
+                      ...filters,
+                      page: Math.max(filters.page - 1, 1),
+                    })
                   }
                   disabled={filters.page === 1}
                   className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
@@ -348,22 +532,25 @@ export default function MockTestsClient({
                   <ChevronLeft className="h-4 w-4" />
                 </button>
 
-                {Array.from({ length: data.totalPages }, (_, index) => index + 1).map(
-                  (pageNumber) => (
-                    <button
-                      key={pageNumber}
-                      type="button"
-                      onClick={() => applyState({ ...filters, page: pageNumber })}
-                      className={`h-10 min-w-10 rounded-full px-3 text-sm font-semibold transition ${
-                        filters.page === pageNumber
-                          ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20"
-                          : "border border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
-                      }`}
-                    >
-                      {pageNumber}
-                    </button>
-                  ),
-                )}
+                {Array.from(
+                  { length: data.totalPages },
+                  (_, index) => index + 1,
+                ).map((pageNumber) => (
+                  <button
+                    key={pageNumber}
+                    type="button"
+                    onClick={() =>
+                      applyState({ ...filters, page: pageNumber })
+                    }
+                    className={`h-10 min-w-10 rounded-full px-3 text-sm font-semibold transition ${
+                      filters.page === pageNumber
+                        ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20"
+                        : "border border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+                    }`}
+                  >
+                    {pageNumber}
+                  </button>
+                ))}
 
                 <button
                   type="button"

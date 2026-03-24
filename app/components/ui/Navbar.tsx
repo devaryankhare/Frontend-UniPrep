@@ -1,84 +1,16 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Menu, X, ChevronDown, LogOut, User as UserIcon } from "lucide-react";
+import { Menu, X, ChevronDown, LogOut } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import type { User } from "@supabase/supabase-js";
 import { IoMdPerson } from "react-icons/io";
-export default function Navbar() {
-  const supabase = createClient();
-  const [user, setUser] = useState<User | null>(null);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
- const router = useRouter();
-  useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+import { useAuth } from "@/providers/AuthProvider";
+import { useMemo } from "react";
 
-      setUser(user);
-
-      if (user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("avatar_url")
-          .eq("id", user.id)
-          .single();
-
-        if (profile?.avatar_url) {
-          setAvatarUrl(profile.avatar_url);
-        }
-      }
-    };
-
-    getUser();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      const currentUser = session?.user ?? null;
-      setUser(currentUser);
-
-      if (currentUser) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("avatar_url")
-          .eq("id", currentUser.id)
-          .single();
-
-        if (profile?.avatar_url) {
-          setAvatarUrl(profile.avatar_url);
-        }
-      } else {
-        setAvatarUrl(null);
-      }
-    });
-
-    // Scroll detection for glassmorphism effect
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    
-    return () => {
-      subscription.unsubscribe();
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setIsProfileOpen(false);
-  };
-
-  const navlinks = [
+const navlinks = [
     { title: "Home", link: "/" },
     { title: "Mocks", link: "/mock-tests" },
     { title: "Materials", link: "/materials" },
@@ -86,16 +18,56 @@ export default function Navbar() {
     { title: "Notice", link: "/notice" },
   ];
 
-  const getInitials = () => {
-    if (user?.user_metadata?.display_name) {
-      return user.user_metadata.display_name.charAt(0).toUpperCase();
-    }
-    return user?.email?.charAt(0).toUpperCase() || "U";
-  };
+export default function Navbar() {
+  const supabase = useMemo(() => createClient(), []);
+  const { user, profile, isAuthLoading } = useAuth();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
-  const getDisplayName = () => {
-    return user?.user_metadata?.display_name || user?.email?.split("@")[0] || "User";
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+const isProfileOpenRef = useRef(isProfileOpen);
+useEffect(() => { isProfileOpenRef.current = isProfileOpen; }, [isProfileOpen]);
+
+useEffect(() => {
+  const handleClickOutside = (e: MouseEvent) => {
+    if (!isProfileOpenRef.current) return;
+    if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
+      setIsProfileOpen(false);
+    }
   };
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => document.removeEventListener("mousedown", handleClickOutside);
+}, []);
+
+  const handleLogout = async () => {
+  await supabase.auth.signOut();
+  setIsProfileOpen(false);
+  router.push("/auth");
+};
+
+  const avatarUrl = profile?.avatar_url ?? null;
+
+const displayName = useMemo(() =>
+  user?.user_metadata?.display_name || user?.email?.split("@")[0] || "User"
+, [user]);
+
+const initials = useMemo(() =>
+  (user?.user_metadata?.display_name ?? user?.email ?? "U").charAt(0).toUpperCase()
+, [user]);
 
   return (
     <>
@@ -132,8 +104,10 @@ export default function Navbar() {
 
           {/* User Actions */}
           <div className="flex items-center gap-2">
-            {user ? (
-              <div className="relative">
+            {isAuthLoading ? (
+              <div className="h-9 w-24 rounded-full bg-slate-100" />
+            ) : user ? (
+              <div ref={profileMenuRef} className="relative">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -150,11 +124,11 @@ export default function Navbar() {
                         className="h-full w-full object-cover"
                       />
                     ) : (
-                      getInitials()
+                      <span>{initials}</span>
                     )}
                   </div>
-                  <span className="hidden sm:block text-sm font-medium text-slate-700 max-w-[100px] truncate">
-                    {getDisplayName()}
+                  <span className="hidden sm:block text-sm font-medium text-slate-700 max-w-25 truncate">
+                    {displayName}
                   </span>
                   <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${isProfileOpen ? "rotate-180" : ""}`} />
                 </motion.button>
@@ -170,8 +144,8 @@ export default function Navbar() {
                       className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-xl shadow-black/10 border border-slate-100 overflow-hidden"
                     >
                       <div className="p-3 border-b border-slate-100">
-                        <p className="text-sm font-semibold text-slate-900 truncate">{getDisplayName()}</p>
-                        <p className="text-xs text-slate-500 truncate" onClick={()=>router.push("/profile")}>{user.email}</p>
+                        <p className="text-sm font-semibold text-slate-900 truncate">{displayName}</p>
+                        <p className="text-xs text-slate-500 truncate">{user.email}</p>
                       </div>
                       <div className="p-1 flex flex-col justify-center items-center">
                         <Link className="flex w-full gap-2 items-center justify-start hover:bg-neutral-100 duration-300 px-3 py-2" href="/profile"><IoMdPerson />Profile</Link>
