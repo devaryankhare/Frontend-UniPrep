@@ -124,66 +124,66 @@ export default async function TestInstructionsPage({
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-100 p-6">
+    <div className="min-h-screen flex items-center justify-center bg-neutral-100 sm:p-6 p-4">
       <div className="max-w-6xl w-full rounded-2xl bg-white p-8 shadow-xl pb-40">
-        <h1 className="text-2xl font-semibold border-b">General Instruction</h1>
+        <h1 className="sm:text-2xl text-lg font-semibold border-b">General Instruction</h1>
         <ul className="space-y-2 p-6 text-black list-decimal">
-          <li>
+          <li className="sm:text-[16px] text-sm">
             Total Duration of the examination is defined per mock(usually 60
             minutes)
           </li>
-          <li>
+          <li className="sm:text-[16px] text-sm">
             The clock will be set at the server. The countdown timer in the top
             right corner of the screen will display the remaining time available
             for you to complete the examination. When the timer reaches zero,
             the examination will end itself. You will not be required to end or
             submit your examination.
           </li>
-          <li>
+          <li className="sm:text-[16px] text-sm">
             The question palette displayed on the right side of screen will show
             the status of each question using one of the following symbols:
             <div className="bg-neutral-100 flex flex-col my-4 gap-4 p-4 rounded-lg border border-neutral-200">
               <div className="flex gap-4 items-center">
-                <div className="px-4 rounded-lg py-2 bg-white border border-neutral-200">
+                <div className="px-4 sm:text-[16px] text-xs rounded-lg py-2 bg-white border border-neutral-200">
                   1
                 </div>
-                <span>You have not visited the question yet.</span>
+                <span className="sm:text-[16px] text-xs">You have not visited the question yet.</span>
               </div>
               <div className="flex gap-4 items-center">
-                <div className="px-4 py-2 rounded-t-full bg-red-500 text-white">
+                <div className="px-4 py-2 sm:text-[16px] text-xs rounded-t-full bg-red-500 text-white">
                   2
                 </div>
-                <span>You have not answered the question</span>
+                <span className="sm:text-[16px] text-xs">You have not answered the question</span>
               </div>
               <div className="flex gap-4 items-center">
-                <div className="px-4 py-2 rounded-t-full bg-green-500 text-white">
+                <div className="px-4 py-2 rounded-t-full sm:text-[16px] text-xs bg-green-500 text-white">
                   3
                 </div>
-                <span>You have answered the question.</span>
+                <span className="sm:text-[16px] text-xs">You have answered the question.</span>
               </div>
               <div className="flex gap-4 items-center">
-                <div className="px-4 rounded-full py-2 bg-purple-600 text-white">
+                <div className="px-4 sm:text-[16px] text-xs rounded-full py-2 bg-purple-600 text-white">
                   4
                 </div>
-                <span>
+                <span className="sm:text-[16px] text-xs">
                   The question(s) marked for review will not be considered for
                   evaluation
                 </span>
               </div>
               <div className="flex gap-4 items-center">
-                <div className="px-4 relative rounded-full py-2 text-white bg-purple-600">
+                <div className="px-4 relative sm:text-[16px] text-xs rounded-full py-2 text-white bg-purple-600">
                   5
                   <span className="absolute top-7 right-[-2] w-3 h-3 bg-green-500 rounded-full"></span>
                 </div>
-                <span>
+                <span className="sm:text-[16px] text-xs">
                   The question(s) aswered and marked for review will be
                   considered for evaluation.
                 </span>
               </div>
             </div>
           </li>
-          <h1 className="underline underline-black underline-offset-2 text-black text-2xl font-semibold pt-8">Navigating to a question:</h1>
-          <li>
+          <h1 className="underline underline-black underline-offset-2 text-black sm:text-2xl text-lg font-semibold pt-8">Navigating to a question:</h1>
+          <li className="sm:text-[16px] text-xs">
             To answer a question do the following :
               <ul className="list-disc px-4 flex flex-col gap-2">
                 <li>Click on the question number in the question palette at the right of your screen to go to that numbered question directly.</li>
@@ -191,8 +191,8 @@ export default async function TestInstructionsPage({
                 <li>Click on Mark for Review & Next to save your answer for the current question, mark for review, and then fo to the next question.</li>
               </ul>
           </li>
-          <h1 className="underline underline-black underline-offset-2 text-black text-2xl font-semibold pt-8">Answering a Question:</h1>
-          <li>Procedure for answering a multiple choice type question:
+          <h1 className="underline underline-black underline-offset-2 text-black sm:text-2xl text-lg font-semibold pt-8">Answering a Question:</h1>
+          <li className="sm:text-[16px] text-xs">Procedure for answering a multiple choice type question:
               <ul className="list-disc px-4 flex flex-col gap-2">
                 <li>To select your answer, click on the button of one of the options</li>
                 <li>To deslect your chosen answer, click on the button of the chosen option again or click on the Clear Response button.</li>
@@ -203,23 +203,23 @@ export default async function TestInstructionsPage({
               </ul>
           </li>
 
-          <h1 className="underline underline-black underline-offset-2 text-black text-2xl font-semibold pt-8">Security & Fairness Protocols:</h1>
-          <li><strong>Attempts Policy: </strong>Each mock test is strictly limited. However, candidates may review thier answers and deatiled solutions unlimited times.</li>
-          <li><strong>Watermarking: </strong>To maintain exam integrity, a user-specific watermark is displayed across the interface, adhering to standard NTA security protocols</li>
-          <li><strong>Full-Screen Enforcement: </strong>For fairness and discipline, candidates are strictly prohibited froom exiting Full-Screen Mode.
+          <h1 className="underline underline-black underline-offset-2 text-black sm:text-2xl text-lg font-semibold pt-8">Security & Fairness Protocols:</h1>
+          <li className="sm:text-[16px] text-xs"><strong>Attempts Policy: </strong>Each mock test is strictly limited. However, candidates may review thier answers and deatiled solutions unlimited times.</li>
+          <li className="sm:text-[16px] text-xs"><strong>Watermarking: </strong>To maintain exam integrity, a user-specific watermark is displayed across the interface, adhering to standard NTA security protocols</li>
+          <li className="sm:text-[16px] text-xs"><strong>Full-Screen Enforcement: </strong>For fairness and discipline, candidates are strictly prohibited froom exiting Full-Screen Mode.
               <ul className="list-disc px-4 flex flex-col gap-2">
-                <li>You are alloted 2 warnings per mock.</li>
-                <li>Violation of this rule (exiting full screen more than twice) will result in automatic submission of your test.</li>
+                <li className="sm:text-[16px] text-xs">You are alloted 2 warnings per mock.</li>
+                <li className="sm:text-[16px] text-xs">Violation of this rule (exiting full screen more than twice) will result in automatic submission of your test.</li>
               </ul>
           </li>
         </ul>
 
         <form
           action={startTest}
-          className="fixed bottom-0 items-center justify-center left-0 w-full bg-white border-t border-neutral-300 p-4 flex flex-col gap-4"
+          className="fixed bottom-0 items-center justify-center left-0 w-full bg-white border-t border-neutral-300 px-4 sm:py-4 py-2 flex flex-col sm:gap-4 gap-2"
         >
           <ProceedLoader />
-          <label className="flex items-center py-2 gap-3 text-md max-w-6xl text-black">
+          <label className="flex items-center sm:py-2 sm:gap-4 gap-2 sm:text-[16px] text-xs max-w-6xl text-black">
             <input
               id="confirmStart"
               name="confirmStart"
@@ -233,13 +233,13 @@ export default async function TestInstructionsPage({
           <div className="flex gap-4 max-w-6xl mx-auto w-full">
             <button
               type="submit"
-              className="w-full bg-emerald-300 text-black border py-3 rounded-lg hover:opacity-90 transition"
+              className="w-full sm:text-[16px] text-xs bg-emerald-300 text-black border py-2 rounded-lg hover:opacity-90 transition"
             >
               Proceed
             </button>
 
             <Link
-              className="w-full flex items-center justify-center bg-red-200 text-black border py-3 rounded-lg hover:opacity-90 transition"
+              className="w-full sm:text-[16px] text-xs flex items-center justify-center bg-red-200 text-black border py-2 rounded-lg hover:opacity-90 transition"
               href="/mock-tests"
             >
               Go Back
