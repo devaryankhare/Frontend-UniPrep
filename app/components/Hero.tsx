@@ -10,13 +10,13 @@ import Image from "next/image";
 export default function Hero() {
 
   return (
-    <main className="relative w-full sm:min-h-[80vh] min-h-screen flex items-center justify-center overflow-hidden">
+    <main className="relative flex w-full items-start justify-center overflow-hidden pt-10 sm:min-h-[80vh] sm:items-center sm:pt-0">
       <Image
         src="/bg/man.png"
         alt="Bottom Left Decoration"
         width={300}
         height={300}
-        className="absolute bottom-0 left-0 w-64 h-64 sm:w-32 sm:h-32 md:w-84 md:h-84 object-contain"
+        className="absolute bottom-0 left-0 h-40 w-40 object-contain sm:h-32 sm:w-32 md:h-84 md:w-84"
       />
       <Image
         src="/bg/women.png"
@@ -25,7 +25,7 @@ export default function Hero() {
         height={300}
         className="absolute bottom-0 right-0 w-24 h-24 sm:w-32 sm:h-32 md:w-88 md:h-88 object-contain hidden sm:block"
       />
-      <div className="relative z-10 flex flex-col gap-6 md:gap-8 justify-center items-center max-w-4xl mx-auto px-6 sm:px-8 lg:px-10 py-12 rounded-2xl">
+      <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center justify-center gap-6 px-6 pb-44 sm:px-8 sm:py-12 md:gap-8 lg:px-10 rounded-2xl">
         {/* Modern Rating Badge */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -49,7 +49,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-center leading-[1.1] tracking-tight"
+          className="text-center text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
         >
           <span className="bg-clip-text text-transparent font-bold bg-linear-to-r from-gray-900 via-gray-800 to-gray-900">
             All you need to Ace 
@@ -71,7 +71,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-          className="max-w-2xl text-lg md:text-xl text-center text-black leading-relaxed"
+          className="max-w-2xl text-center text-base leading-relaxed text-black sm:text-lg md:text-xl"
         >
           Mocks. AI Analysis. Ranker Mentorship. Preference Filling.
         </motion.p>
