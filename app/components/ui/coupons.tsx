@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 export default function Coupon() {
   const couponCode = "EARLYBIRDS20";
@@ -15,6 +16,7 @@ export default function Coupon() {
   });
 
   const [copied, setCopied] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
 
   useEffect(() => {
     const updateTimer = () => {
@@ -57,13 +59,32 @@ export default function Coupon() {
 
   return (
     <main className="mx-auto w-full bg-black">
-      <div className="flex items-center justify-between p-4 text-sm">
-        <h1 className="text-[16px] text-white">
+      <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-2 md:hidden">
+        <p className="text-xs font-medium text-white">
+          Offer
+        </p>
+
+        <button
+          type="button"
+          onClick={() => setIsMinimized((prev) => !prev)}
+          className="flex items-center gap-1 rounded-full border border-zinc-700 px-3 py-1 text-xs text-zinc-300 transition hover:bg-zinc-900"
+        >
+          {isMinimized ? "Show" : "Hide"}
+          {isMinimized ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+        </button>
+      </div>
+
+      <div
+        className={`overflow-hidden transition-all duration-300 ${
+          isMinimized ? "max-h-0 py-0 opacity-0 md:max-h-none md:py-4 md:opacity-100" : "max-h-[500px] opacity-100"
+        } flex flex-col gap-4 p-4 text-sm md:flex-row md:items-center md:justify-between`}
+      >
+        <h1 className="text-center text-sm text-white md:text-left md:text-[16px]">
           🎉 Claim This At Checkout ! 🎉
         </h1>
 
-        <div className="flex items-center gap-2 text-white">
-          <div className="flex flex-col items-center rounded-lg bg-zinc-900 px-3 py-2 min-w-[60px]">
+        <div className="flex w-full items-center justify-center gap-1 overflow-x-auto text-white md:w-auto md:gap-2">
+          <div className="flex min-w-[52px] flex-col items-center rounded-lg bg-zinc-900 px-2 py-2 md:min-w-[60px] md:px-3">
             <span className="text-lg font-bold leading-none">
               {String(timeLeft.days).padStart(2, "0")}
             </span>
@@ -74,7 +95,7 @@ export default function Coupon() {
 
           <span className="text-lg font-bold text-zinc-500">:</span>
 
-          <div className="flex flex-col items-center rounded-lg bg-zinc-900 px-3 py-2 min-w-[60px]">
+          <div className="flex min-w-[52px] flex-col items-center rounded-lg bg-zinc-900 px-2 py-2 md:min-w-[60px] md:px-3">
             <span className="text-lg font-bold leading-none">
               {String(timeLeft.hours).padStart(2, "0")}
             </span>
@@ -85,7 +106,7 @@ export default function Coupon() {
 
           <span className="text-lg font-bold text-zinc-500">:</span>
 
-          <div className="flex flex-col items-center rounded-lg bg-zinc-900 px-3 py-2 min-w-[60px]">
+          <div className="flex min-w-[52px] flex-col items-center rounded-lg bg-zinc-900 px-2 py-2 md:min-w-[60px] md:px-3">
             <span className="text-lg font-bold leading-none">
               {String(timeLeft.minutes).padStart(2, "0")}
             </span>
@@ -96,7 +117,7 @@ export default function Coupon() {
 
           <span className="text-lg font-bold text-zinc-500">:</span>
 
-          <div className="flex flex-col items-center rounded-lg bg-zinc-900 px-3 py-2 min-w-[60px]">
+          <div className="flex min-w-[52px] flex-col items-center rounded-lg bg-zinc-900 px-2 py-2 md:min-w-[60px] md:px-3">
             <span className="text-lg font-bold leading-none">
               {String(timeLeft.seconds).padStart(2, "0")}
             </span>
@@ -108,9 +129,9 @@ export default function Coupon() {
 
         <div
           onClick={handleCopy}
-          className="group relative cursor-pointer overflow-hidden rounded-full bg-purple-300 px-4 py-2 text-black"
+          className="group relative mx-auto w-full max-w-[260px] cursor-pointer overflow-hidden rounded-full bg-purple-300 px-4 py-2 text-center text-black md:mx-0 md:w-auto"
         >
-          <div className="flex items-center gap-1 transition duration-200 group-hover:blur-sm">
+          <div className="flex flex-wrap items-center justify-center gap-1 transition duration-200 group-hover:blur-sm">
             {str.map((item, index) => (
               <div className="text-center font-semibold" key={index}>
                 {item}
