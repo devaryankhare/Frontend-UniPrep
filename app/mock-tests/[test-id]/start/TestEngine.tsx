@@ -236,26 +236,13 @@ export default function TestEngine({
 
       {/* Main Section — grows naturally, page scrolls */}
       <div className="flex-1 min-w-0 relative z-10">
-        {/* Watermark Overlay (only on exam section) */}
-        <div className="overflow-clip absolute inset-0 pointer-events-none z-0 flex items-center justify-center">
-          <div
-            className="text-black opacity-10 text-4xl font-bold select-none"
-            style={{
-              transform: "rotate(-45deg)",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {attemptId}
-          </div>
-          
-        </div>
         <div className="bg-white p-4 md:p-12 rounded-xl shadow-sm">
           <h1 className="text-lg font-semibold border-b pb-2 mb-6">
             Question {currentIndex + 1} of {questions.length}
           </h1>
 
           <div className="border-b pb-4 mb-2">
-            <p className="text-xl break-words whitespace-pre-wrap">
+            <p className="sm:text-xl text-sm break-words whitespace-pre-wrap">
               {currentQuestion.question_text}
             </p>
 
@@ -279,7 +266,7 @@ export default function TestEngine({
               return (
                 <label
                   key={option.id}
-                  className={`flex items-center gap-3 p-3 cursor-pointer transition break-words ${
+                  className={`flex items-center gap-3 sm:p-3 cursor-pointer transition break-words ${
                     checked ? "bg-white" : "hover:bg-gray-50 rounded-2xl"
                   }`}
                 >
@@ -290,7 +277,7 @@ export default function TestEngine({
                     onChange={() => selectOption(option.id)}
                     className="accent-blue-500"
                   />
-                  <span className="text-lg leading-relaxed">{option.option_text}</span>
+                  <span className="sm:text-lg text-sm leading-relaxed">{option.option_text}</span>
                 </label>
               );
             })}
@@ -300,14 +287,14 @@ export default function TestEngine({
             {currentIndex === questions.length - 1 ? (
               <button
                 onClick={() => setShowSubmitModal(true)}
-                className="px-6 py-4 bg-emerald-500 text-white rounded"
+                className="px-6 py-4 bg-emerald-500 text-white sm:text-[16px] text-xs rounded"
               >
                 Save & Submit
               </button>
             ) : (
               <button
                 onClick={handleSaveAndNext}
-                className="px-4 py-4 bg-green-500 text-white rounded"
+                className="px-4 py-4 bg-green-500 text-white sm:text-[16px] text-xs rounded"
               >
                 Save & Next
               </button>
@@ -315,21 +302,21 @@ export default function TestEngine({
 
             <button
               onClick={clearResponse}
-              className="px-8 py-4 bg-white border border-black text-black rounded"
+              className="px-8 py-4 bg-white sm:text-[16px] text-xs border border-black text-black rounded"
             >
               Clear
             </button>
 
             <button
               onClick={handleSaveAndMarkForReview}
-              className="px-4 py-4 bg-amber-500 text-white rounded"
+              className="px-4 py-4 bg-amber-500 sm:text-[16px] text-xs text-white rounded"
             >
               Save & Mark for Review
             </button>
 
             <button
               onClick={handleMarkForReviewAndNext}
-              className="px-4 py-4 bg-blue-500 text-white rounded"
+              className="px-4 py-4 bg-blue-500 sm:text-[16px] text-xs text-white rounded"
             >
               Marked for Review & Next
             </button>
@@ -356,50 +343,88 @@ export default function TestEngine({
 
       {/* Right Palette — sticks to viewport while page scrolls */}
       <div className="w-full md:w-92 md:sticky md:top-0 md:h-screen flex flex-col justify-between bg-white md:border-l border-b p-4 md:p-6 pb-6 md:pb-12 overflow-y-auto relative z-10 order-first md:order-last">
-        <div>
-          <div className="flex justify-between items-center mb-6">
-            <div className="text-black flex items-center gap-2 font-bold text-lg">
-              Remaining Time :
-              <span className="bg-cyan-500 text-white px-6 py-2 rounded-full">
-                {formatTime(timeLeft)}
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-5 gap-2">
-            {questions.map((q, index) => {
-              const isAnswered = !!answers[q.id];
-              const isMarked = !!markedReview[q.id];
-              const isCurrent = index === currentIndex;
-
-              return (
-                <button
-                  key={q.id}
-                  onClick={() => goToQuestion(index)}
-                  className={`p-3 text-lg font-medium ${
-                    isCurrent
-                      ? "bg-neutral-200 text-black rounded-full"
-                      : isMarked
-                        ? "bg-purple-500 text-white rounded-full"
-                        : isAnswered
-                          ? "bg-green-500 text-white rounded-t-full"
-                          : visited[q.id]
-                            ? "bg-red-400 text-white rounded-t-full"
-                            : "bg-neutral-50 text-black border rounded-xl border-neutral-300"
-                  }`}
-                >
-                  <span className="relative flex items-center justify-center">
-                    {index + 1}
-                    {isMarked && isAnswered && (
-                      <span className="absolute -bottom-3 -right-3 w-4 h-4 bg-green-500 rounded-full" />
-                    )}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
+  <div className="min-w-0">
+    {/* Header - Stays visible */}
+    <div className="flex justify-between items-center mb-4 md:mb-6">
+      <div className="text-black flex items-center gap-2 font-bold text-base md:text-lg">
+        Remaining Time :
+        <span className="bg-cyan-500 text-white px-4 md:px-6 py-1.5 md:py-2 rounded-full text-sm md:text-base">
+          {formatTime(timeLeft)}
+        </span>
       </div>
+    </div>
+
+    {/* Mobile: Horizontal scroll container */}
+    <div className="md:hidden -mx-4 px-4 overflow-x-auto pb-4 scrollbar-hide">
+      <div className="flex gap-2 min-w-max">
+        {questions.map((q, index) => {
+          const isAnswered = !!answers[q.id];
+          const isMarked = !!markedReview[q.id];
+          const isCurrent = index === currentIndex;
+
+          return (
+            <button
+              key={q.id}
+              onClick={() => goToQuestion(index)}
+              className={`flex-shrink-0 w-12 h-12 text-sm font-medium flex items-center justify-center ${
+                isCurrent
+                  ? "bg-neutral-200 text-black rounded-full ring-2 ring-neutral-400"
+                  : isMarked
+                    ? "bg-purple-500 text-white rounded-full"
+                    : isAnswered
+                      ? "bg-green-500 text-white rounded-t-full"
+                      : visited[q.id]
+                        ? "bg-red-400 text-white rounded-t-full"
+                        : "bg-neutral-50 text-black border rounded-xl border-neutral-300"
+              }`}
+            >
+              <span className="relative flex items-center justify-center w-full h-full">
+                {index + 1}
+                {isMarked && isAnswered && (
+                  <span className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+                )}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+
+    {/* Desktop: Grid layout */}
+    <div className="hidden md:grid grid-cols-5 gap-2">
+      {questions.map((q, index) => {
+        const isAnswered = !!answers[q.id];
+        const isMarked = !!markedReview[q.id];
+        const isCurrent = index === currentIndex;
+
+        return (
+          <button
+            key={q.id}
+            onClick={() => goToQuestion(index)}
+            className={`p-4 text-sm font-medium ${
+              isCurrent
+                ? "bg-neutral-200 text-black rounded-full"
+                : isMarked
+                  ? "bg-purple-500 text-white rounded-full"
+                  : isAnswered
+                    ? "bg-green-500 text-white rounded-t-full"
+                    : visited[q.id]
+                      ? "bg-red-400 text-white rounded-t-full"
+                      : "bg-neutral-50 text-black border rounded-xl border-neutral-300"
+            }`}
+          >
+            <span className="relative flex items-center justify-center">
+              {index + 1}
+              {isMarked && isAnswered && (
+                <span className="absolute -bottom-3 -right-3 w-4 h-4 bg-green-500 rounded-full" />
+              )}
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  </div>
+</div>
     </div>
   );
 }
