@@ -5,27 +5,34 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.uniprep.in"),
 
   title: {
-    default: "Study with wide range of curated materials",
+    default: "CUET Notes, PYQs & Flashcards",
     template: "%s | Uniprep",
   },
 
   description:
-    "Uniprep helps students prepare for CUET exam with mock tests, smart analytics, and structured learning tools designed for modern exam preparation.",
+    "Access CUET notes, PYQs, flashcards, important words, and study materials for commerce and other subjects. Learn smarter with structured resources on Uniprep.",
 
   keywords: [
-    "exam preparation",
-    "mock tests",
-    "online test platform",
-    "CUET preparation",
-    "study platform",
-    "student learning tools",
-    "practice tests",
-    "CUET mock tests",
-    "Online test series for CUET",
-    "Free CUET mock test",
+    "CUET notes",
+    "CUET PYQs",
+    "CUET flashcards",
+    "CUET study materials",
+    "commerce CUET notes",
+    "commerce PYQs",
+    "CUET previous year questions",
+    "CUET previous year papers",
+    "important CUET words",
+    "CUET vocabulary flashcards",
+    "CUET study resources",
+    "CUET exam preparation",
     "Delhi University CUET preparation",
-    "Target DU CUET 2026",
-    "How to crack CUET 2026 with smart practice",
+    "CUET commerce preparation",
+    "CUET notes pdf",
+    "free CUET notes",
+    "CUET question bank",
+    "CUET practice material",
+    "flashcards for CUET",
+    "Uniprep study materials",
   ],
 
 authors: [
@@ -41,9 +48,9 @@ creator: "Uniprep",
 publisher: "Uniprep",
 
   openGraph: {
-    title: "Uniprep | Smart CUET Exam Preparation Platform",
+    title: "Uniprep | CUET Notes, PYQs & Flashcards",
     description:
-      "Practice smarter with Uniprep. Take mock tests, analyze performance, and prepare efficiently for competitive exams.",
+      "Explore CUET notes, PYQs, flashcards, and structured study materials to prepare smarter with Uniprep.",
     url: "https://www.uniprep.in/",
     siteName: "Uniprep",
     type: "website",
@@ -60,9 +67,9 @@ publisher: "Uniprep",
 
   twitter: {
     card: "summary_large_image",
-    title: "Uniprep | Smart CUET Exam Preparation",
+    title: "Uniprep | CUET Notes, PYQs & Flashcards",
     description:
-      "Prepare for CUET exams with mock tests, analytics, and structured practice on Uniprep.",
+      "Access CUET notes, previous year questions, flashcards, and study materials on Uniprep.",
     images: ["/og/og1.png"],
   },
 
