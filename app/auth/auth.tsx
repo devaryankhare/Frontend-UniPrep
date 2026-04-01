@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Lock, User, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Mail, Lock, User, Eye, EyeOff, Loader2, CheckCircle, X } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
 import { IoMdArrowRoundBack } from "react-icons/io";
@@ -20,6 +20,7 @@ export default function AuthForm() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,9 +43,36 @@ export default function AuthForm() {
           },
         });
         if (error) throw error;
+        setToast({
+          message: "Check your email for verification",
+          type: "success",
+        });
+        setIsLogin(true);
+        setEmail("");
+        setPassword("");
+        setDisplayName("");
+
+        setTimeout(() => {
+          setToast(null);
+        }, 4000);
       }
     } catch (error: any) {
       console.error(error.message);
+
+      let errorMessage = error.message;
+
+      if (error.message?.toLowerCase().includes("email rate limit exceeded")) {
+        errorMessage = "Too many emails were sent. Please wait a few minutes before trying again.";
+      }
+
+      setToast({
+        message: errorMessage,
+        type: "error",
+      });
+
+      setTimeout(() => {
+        setToast(null);
+      }, 4000);
     } finally {
       setLoading(false);
     }
@@ -73,7 +101,35 @@ export default function AuthForm() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-linear-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center p-4">
+    <div className="min-h-screen w-full bg-linear-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center p-4 relative overflow-hidden">
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-white shadow-xl rounded-2xl px-4 py-3 flex items-center gap-3 min-w-[300px] max-w-[90vw] border ${
+              toast.type === "success" ? "border-green-200" : "border-red-200"
+            }`}
+          >
+            <CheckCircle
+              className={`w-5 h-5 shrink-0 ${
+                toast.type === "success" ? "text-green-600" : "text-red-600"
+              }`}
+            />
+            <p className="text-sm font-medium text-slate-700 flex-1">
+              {toast.message}
+            </p>
+            <button
+              onClick={() => setToast(null)}
+              className="p-1 rounded-md hover:bg-slate-100 transition-colors"
+            >
+              <X className="w-4 h-4 text-slate-500" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
